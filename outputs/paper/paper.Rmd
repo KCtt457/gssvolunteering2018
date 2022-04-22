@@ -1,12 +1,10 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
-author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+title: "Qualities of Volunteering and Life Satisfaction: A multiple linear regression model"
+subtitle: "Insights from the 2018 Canadian General Social Survey"
+author: Kimlin Chin
+thanks: "Code and data are available at: https://github.com/KCtt457/gssvolunteering2018."
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Volunteering has been linked to many benefits including health, happiness and life satisfaction; however, there is limited research on the precise aspects of volunteering associated with these benefits. In this paper, we investigate how different aspects of volunteering including frequency, reasons and quality of experience in volunteering are correlated with life satisfaction using a multiple linear regression model. We find that among people who volunteer, people who use their skills in their volunteering experience and volunteer at least once a week had higher life satisfaction. Our findings have implications for the general public in making the most out of their volunteer experience. \\par \\textbf{Keywords:} volunteering, life satisfaction, multiple linear regression, canadian general social survey, canada"
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -17,47 +15,28 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
-library(palmerpenguins)
+
+gss1 <- read_csv(here::here("inputs/data/gss.csv"))
 ```
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+<!-- Background, context -->
+Volunteering has been linked to many benefits including health, happiness and life satisfaction (cite literature).
 
+But what specific aspects of volunteering may be related to life satisfaction? In this paper we take a look at the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating to investigate this question. Specifically we construct a multiple linear regression model with life satisfaction as our dependent variable, and independent variables for frequency, reasons for volunteering and quality of volunteer experience. We find that among people who volunteer, people who use their skills in their volunteering experience and volunteer at least once a week had higher life satisfaction.
 
+The rest of the paper has the following structure: Section \@ref(data) describes the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating, Section \@ref(model) discusses the multiple linear regression model, Section \@ref(results) presents the results of our analysis and Section \@ref(discussion) discusses the findings and limitations.
 
 # Data
 
-Our data is of penguins (Figure \@ref(fig:bills)).
+The data is from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating. There are 956 variables and 16,149 observations in the dataset.
 
-```{r bills, fig.cap="Bills of penguins", echo = FALSE}
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
+The variables include basic demographic information, such as age, gender, marital status, province, as well as depict the topics of volunteer specifics and details, reasons for volunteering or not volunteering, quality and history of volunteering, financial giving and youth experiences.
 
-Talk more about it.
+A subset of the variables is shown in table 1.
 
-Also bills and their average (Figure \@ref(fig:billssssss)). (Notice how you can change the height and width so they don't take the whole page?)
-
-```{r billssssss, fig.cap="More bills of penguins", echo = FALSE, fig.width=8, fig.height=4}
-
-# This needs to be about the random data tha tI sasmpled?
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk way more about it. 
-
+`R` [@citeR] and the R package `tidyverse` which was written by @thereferencecanbewhatever were used for data processing and to make the plots and tables.
 
 
 # Model
