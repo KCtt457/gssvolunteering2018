@@ -13,8 +13,10 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(knitr.kable.NA = '') # remove NAs from kable https://stackoverflow.com/questions/27626461/hiding-nas-when-printing-a-dataframe-in-knitr
 
 library(tidyverse)
+library(kableExtra)
 
 gss1 <- read_csv(here::here("inputs/data/gss.csv"))
 ```
@@ -30,26 +32,175 @@ The rest of the paper has the following structure: Section \@ref(data) describes
 
 # Data
 
-The data is from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating. There are 956 variables and 16,149 observations in the dataset.
+## Data Source
+
+The data is from the 2018 Canadian General Social Survey (GSS) on Giving, Volunteering & Participating. Canada's GSS program conducts independent cross-sectional surveys each year on a specific topic. The main objectives of the program are to gather data on social trends in order to monitor changes in the living conditions and well-being of Canadians and to provide information on specific social policy issues [cite]. The topic for 2018 was Giving, Volunteering & Participating, which was the seventh time data on this topic has been collected at the national level.
+
+## Data Collection and Methodology
+
+<!-- Population, frame and sample -->
+Data was collected by Statistics Canada during the period of September 4th to December 28th, 2018. The target population included individuals 15 years and over in Canada, excluding institutionalized persons and residents of the Yukon, Northwest Territories, and Nunavut. For sampling, the ten provinces were divided into strata by geographical area. The survey frame was developed by combining lists of telephone numbers from various sources and lists of dwellings from the Address Register. Each record in the survey frame was assigned a stratum within its province. Households were then randomly sampled within each stratum and a single respondent from each household was chosen using an age-order method to either complete an electronic questionnaire or telephone interview.
+
+Due the low prevalence of volunteers in the population, rejective sampling was also used to obtain a larger number of respondents in the population of interest which is volunteers. There were 16,149 respondents in the survey, excluding 'rejected' respondents. 
+
+## Key Features
+
+There are 956 variables and 16,149 observations in the dataset.
 
 The variables include basic demographic information, such as age, gender, marital status, province, as well as depict the topics of volunteer specifics and details, reasons for volunteering or not volunteering, quality and history of volunteering, financial giving and youth experiences.
 
-A subset of the variables is shown in table 1.
+A subset of the variables is shown in table \@ref(tab:datafeatures).
 
-`R` [@citeR] and the R package `tidyverse` which was written by @thereferencecanbewhatever were used for data processing and to make the plots and tables.
+```{r datafeatures, echo=FALSE, message=FALSE}
+gss1 %>%
+  select(dh1gage, gndr, fv1fvol, vs1_010, vs1_020, rv_090, qvs_030) %>%
+  slice(1:10) %>%
+  kable(
+    caption = "Some key features",
+    col.names = c("Age group of respondent", "Gender", "Volunteer Flag", "Number of Organizations", "Volunteer Frequency", "Reasons for Volunteering-To use skills", "Quality of Volunteer Experience-Community Contribution"),
+    digits = 1,
+    booktabs = TRUE,
+    linesep = ""
+  ) %>%
+column_spec(c(1,4,5,6,7), width = "2.5cm")
+```
 
+Since we are interested in the relationship between volunteering and life satisfaction, we do some data exploration of these features. Figure \@ref(fig:volunteerflag) shows the number of volunteers and non-volunteers in the sample.
+
+```{r volunteerflag, echo=FALSE, fig.cap="Number of Volunteers and Non-Volunteers in the Sample", message=FALSE, fig.height=3}
+ggplot(gss1) +
+  geom_bar(aes(x = fv1fvol)) +
+  labs(x="Volunteer Flag",
+       y="Number of responses") +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+```
+
+There is about a 50-50 split between the volunteers and non-volunteers in ours sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.
+
+Figure \@ref(fig:lifesatis) shows life satisfaction by volunteer status. Life satisfaction was rated on a scale from 0 to 10, where 0 means very disatisfied with life, and 10 means very satisfied with life. Overall, the majority of respondents had relatively high satisfaction ratings about 7-10. It can clearly be seen from the graph that in the lower life satisfaction ratings 0-6, the percentage of non-volunteers was greater than volunteers. Interestingly at a rating of 7 it appears to be about an even split, and for higher life satisfaction ratings the percentage of volunteers is greater than the percentage of non-volunteers.
+
+```{r lifesatis, echo=FALSE, message=FALSE, fig.cap="Life satisfaction by Volunteer Status"}
+
+lifesat <- gss1 %>%
+  select(slm_01, fv1fvol) %>%
+  mutate(slm_01 = as.factor(slm_01)) %>%
+  na.omit()
+
+ggplot(lifesat) +
+  geom_bar(aes(x=slm_01, fill=fv1fvol), position = "dodge") +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
+  labs(x = "Life Satisfaction",
+       y = "Number of Responses",
+       fill = "Volunteer Flag",
+       caption = "0 = Very dissatisfied,\n10 = Very satisfied")
+
+```
+
+Therefore this brief glimpse of data hints at a relationship between being a volunteer and life satisfaction. We would also like to explore more of the characteristics of volunteering such as perhaps number of organizations and frequency that may be involved in this relationship.
+
+<!-- Correlation matrix -->
+
+
+
+`R` [@citeR] and the R packages `tidyverse`[@thereferencecanbewhatever] and kableExtra [@kableExtra] were used for data processing and to make the plots and tables.
+
+## Strengths and Weaknesses
+
+Some strengths of the data include that it is a large sample, it explores multiple different variables on the topic of interest which is giving, volunteering and participating in detail and also although volunteers were the subject of interest, data on non-volunteers were also included such as their reasons for not volunteering or other similar activities (such as helping at home) that they may undertake instead. 
 
 # Model
 
+## Model 1: Life Satisfaction and Volunteer Flag
+
+For our first model, we are interested in how volunteer status is correlated with life satisfaction. We construct a multiple linear regression model with life satisfaction as the independent variable, and for the dependent variables we use volunteer flag and also various socio-demographic variables including gender, age, education level, marital status, if there are children at home, employment status and family income as these have been found to be relevant in previous research [cite]. The model is show in \@ref(eq:model1) follows:
+
 \begin{equation}
-Pr(\theta | y) = \frac{Pr(y | \theta) Pr(\theta)}{Pr(y)}  (\#eq:bayes)
+life\_satisfaction = volunteer + gender + age + education + married \\ + children\_at\_home + employment\_status + income\_level (\#eq:model1)
 \end{equation}
 
-Equation \@ref(eq:bayes) seems useful, eh?
+```{r model1r, include=FALSE, message=FALSE}
 
-Here's a dumb example of how to use some references: In paper we run our analysis in `R` [@citeR]. We also use the `tidyverse` which was written by @thereferencecanbewhatever If we were interested in baseball data then @citeLahman could be useful. 
+model1var <- gss1 %>%
+  select(slm_01,
+         fv1fvol,
+         gndr,
+         dh1gage,
+         marstat,
+         cxrflag,
+         dlfs,
+         famincg2,
+         dh1ged) %>%
+  mutate(
+    lifesatisfaction = slm_01,
+    isvolunteer = fv1fvol,
+    agegroup = dh1gage,
+    gender = gndr,
+    married = ifelse(marstat == "Married", "Yes", "No"),
+    childrenathome = cxrflag,
+    employed = dlfs,
+    familyincome = as.factor(
+      famincg2 # fix the levels
+      # levels = c(
+      #   "Less than $25,000",
+      #   "$25,000 to $49,999",
+      #   "$50,000 to $74,999",
+      #   "$75,000 to $99,999",
+      #   "$100,000 to $124,999",
+      #   "$125,000 and more"
+      # )
+    ),
+    education = dh1ged
+  ) %>%
+  na.omit()
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+model1 <- lm(lifesatisfaction ~ isvolunteer + gender + agegroup + education + married + childrenathome + employed + familyincome, data = model1var)
+
+summary(model1)
+
+```
+
+
+## Model 2: Life Satisfaction and Volunteer Characteristics
+
+For our second model, we are interested in which specific characteristics of volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and if the volunteer experience fulfills their reasons for volunteering. We created a new variable for whether or not the volunteer experience fulfills their reasons for volunteering by taking the variables for the stated reasons for volunteering and matching it to the variables for the quality of their experience. So for example if an individual stated that a reason for volunteering was to network and they agreed that they were able to network from their volunteer experience, then this variable would be set to 'YES', otherwise 'NO'. Since there are multiple reasons for volunteering, we will set the variable to 'YES' whenever at least one of the reasons are satisfied. The model is shown in \@ref(eq:model2) follows:
+
+\begin{equation}
+life\_satisfaction = num\_organizations + frequency + fulfilling + quality  (\#eq:model2)
+\end{equation}
+
+```{r model2r, include=FALSE, message=FALSE}
+
+model2var <- gss1 %>%
+  mutate(fulfilling = case_when(rv_040 == "Yes" & qvs_010 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_050 == "Yes" & qvs_020 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_080 == "Yes" & qvs_030 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_090 == "Yes" & qvs_060 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_110 == "Yes" & qvs_040 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                TRUE ~ "No")) %>%
+  filter(fv1fvol == "Volunteer") %>%
+  select(slm_01, vs1_010, vs1_020, fulfilling, qvs_010, qvs_020, qvs_030, qvs_040, qvs_050, qvs_060) %>%
+  mutate(lifesatisfaction = slm_01, numorgs = vs1_010, freq = vs1_020, 
+         network = ifelse(qvs_010 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         jobops = ifelse(qvs_020 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         community = ifelse(qvs_030 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
+         health = ifelse(qvs_040 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
+         meaningful = ifelse(qvs_050 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         skills = ifelse(qvs_060 %in% c("Agree", "Strongly agree"), "Yes", "No")) %>%
+  select(lifesatisfaction, numorgs, freq, fulfilling, network, jobops, community, health, meaningful, skills) %>%
+  na.omit()
+
+# model2var %>%
+#   group_by(fulfilling) %>%
+#   summarise(count = n())
+
+model2 <- lm(lifesatisfaction ~ numorgs + freq + fulfilling + network + jobops + community + health + meaningful + skills, data = model2var)
+
+summary(model2)
+
+```
+
 
 
 # Results

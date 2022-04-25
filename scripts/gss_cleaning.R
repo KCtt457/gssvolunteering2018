@@ -101,7 +101,7 @@ cw_statements <-
 #### Apply that dictionary to the raw data ####
 # Pull out a bunch of variables and then apply the case when statement for the categorical variables
 gss <- raw_data %>% 
-  select(-c(slm_01, vd1dhrs,
+  select(-c(slm_01, vd1dhrs, vs1_010,
             vd1dt201,vd1dt202, vd1dt203, vd1dt204, vd1dt205, vd1dt206,
             vd1dt207, vd1dt208, vd1dt209, vd1dt210, vd1dt211, vd1dt212,
             vd1dtx01, vd1dtx02, vd1dtx03, vd1dtx04, vd1dtx05, vd1dtx06, vd1dtx07,
@@ -124,7 +124,7 @@ gss <- gss %>%
   mutate(gndr = str_remove(gndr, " gender")) 
 
 lifesatis <- raw_data %>%
-  select(c(CASEID, slm_01, vd1dhrs, vd1dt201,vd1dt202, vd1dt203, vd1dt204, vd1dt205, vd1dt206,
+  select(c(CASEID, slm_01, vd1dhrs, vs1_010, vd1dt201,vd1dt202, vd1dt203, vd1dt204, vd1dt205, vd1dt206,
            vd1dt207, vd1dt208, vd1dt209, vd1dt210, vd1dt211, vd1dt212,
            vd1dtx01, vd1dtx02, vd1dtx03, vd1dtx04, vd1dtx05, vd1dtx06, vd1dtx07,
            vd1dtx08, vd1dtx09, vd1dtx10, vd1dtx11, vd1dtx12, vd1dtx13, vd1dtx14, vd1dtx15, 
