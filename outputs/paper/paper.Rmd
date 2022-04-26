@@ -17,6 +17,7 @@ options(knitr.kable.NA = '') # remove NAs from kable https://stackoverflow.com/q
 
 library(tidyverse)
 library(kableExtra)
+library(patchwork)
 
 gss1 <- read_csv(here::here("inputs/data/gss.csv"))
 ```
@@ -69,14 +70,15 @@ Since we are interested in the relationship between volunteering and life satisf
 
 ```{r volunteerflag, echo=FALSE, fig.cap="Number of Volunteers and Non-Volunteers in the Sample", message=FALSE, fig.height=3}
 ggplot(gss1) +
-  geom_bar(aes(x = fv1fvol)) +
+  geom_bar(aes(x = fv1fvol, fill=fv1fvol)) +
   labs(x="Volunteer Flag",
        y="Number of responses") +
   theme_minimal() +
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        legend.position = "none")
 ```
 
-There is about a 50-50 split between the volunteers and non-volunteers in ours sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.
+There is about a 50-50 split between the volunteers and non-volunteers in our sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.
 
 Figure \@ref(fig:lifesatis) shows life satisfaction by volunteer status. Life satisfaction was rated on a scale from 0 to 10, where 0 means very disatisfied with life, and 10 means very satisfied with life. Overall, the majority of respondents had relatively high satisfaction ratings about 7-10. It can clearly be seen from the graph that in the lower life satisfaction ratings 0-6, the percentage of non-volunteers was greater than volunteers. Interestingly at a rating of 7 it appears to be about an even split, and for higher life satisfaction ratings the percentage of volunteers is greater than the percentage of non-volunteers.
 
@@ -98,10 +100,107 @@ ggplot(lifesat) +
 
 ```
 
-Therefore this brief glimpse of data hints at a relationship between being a volunteer and life satisfaction. We would also like to explore more of the characteristics of volunteering such as perhaps number of organizations and frequency that may be involved in this relationship.
+Therefore this brief glimpse of data hints at a relationship between being a volunteer and life satisfaction. 
+
+We would also like to explore more of the characteristics of volunteering that may be involved in this relationship. We will restrict our sample to volunteers only when exploring the characteristics of volunteering, since it is not applicable to non-volunteers. It now begs the question, which aspects of volunteering to investigate? The data includes dozens of variables on the types of organizations and types of volunteer activities respondents are involved in. The large number of variables would thus make it difficult to fit to a concise statistical model, and since a person may be involved in multiple organizations and activities, it may also be difficult to measure the individual effects of certain activities.
+
+Some features we could consider instead include number of organizations, frequency of volunteering, and different benefits experienced from volunteering, which are the variables labelled 'Quality of the Volunteering Experience' in the dataset. The different 'qualities' which are rated on a 5-degree scale from Strongly disagree to Strongly agree include networking, job opportunities, community contribution, health improved, meaningful involvement and use of skills and experience. We convert these to binary variables with 'Yes' if they agreed to experiencing the benefit and 'No' otherwise for conciseness.
+
+```{r conciseqove, include=FALSE}
+
+# Add collapsed binary variables for Quality of Volunteering Experience
+gss1 <- gss1 %>%
+  mutate(lifesatisfaction = slm_01, numorgs = vs1_010, freq = vs1_020, 
+         network = ifelse(qvs_010 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         jobops = ifelse(qvs_020 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         community = ifelse(qvs_030 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
+         health = ifelse(qvs_040 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
+         meaningful = ifelse(qvs_050 %in% c("Agree", "Strongly agree"), "Yes", "No"),
+         skills = ifelse(qvs_060 %in% c("Agree", "Strongly agree"), "Yes", "No"))
+   
+```
+
+
 
 <!-- Correlation matrix -->
 
+Another idea to consider are the reasons people choose to volunteer and if they get what they wanted out of their volunteer experience, that is, if their volunteer experience fulfilling. We create a new variable for whether or not the volunteer experience fulfills their reasons for volunteering by taking the variables for the stated reasons for volunteering and matching them to the variables for the quality of their experience. So for example if an individual stated that a reason for volunteering was to network and they agreed that they were able to network from their volunteer experience, then this variable would be set to 'YES', otherwise 'NO'. Since there are multiple reasons for volunteering, we will set the variable to 'YES' whenever at least one of the reasons are satisfied. Plot A of Figure \@ref(fig:fulfilplot) shows the reasons people volunteer we matched to the quality of their experience and Plot B shows the new variable we created.
+
+```{r concisefulfilling, include=FALSE}
+
+# Add new variables for fulfilling
+gss1 <- gss1 %>%
+  mutate(fulfillingn = case_when(rv_040 == "Yes" & qvs_010 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                 TRUE ~ "No"),
+         fulfillingj = case_when(rv_050 == "Yes" & qvs_020 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                 TRUE ~ "No"),
+         fulfillingcc = case_when(rv_080 == "Yes" & qvs_030 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                 TRUE ~ "No"),
+         fulfillings = case_when(rv_090 == "Yes" & qvs_060 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                 TRUE ~ "No"),
+         fulfillingh = case_when(rv_110 == "Yes" & qvs_040 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                 TRUE ~ "No"),
+         fulfilling = case_when(rv_040 == "Yes" & qvs_010 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_050 == "Yes" & qvs_020 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_080 == "Yes" & qvs_030 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_090 == "Yes" & qvs_060 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                rv_110 == "Yes" & qvs_040 %in% c("Agree", "Strongly agree") ~ "Yes",
+                                TRUE ~ "No"))
+```
+
+```{r fulfilplot, echo=FALSE, fig.cap="Reasons for Volunteering that were fulfilled"}
+
+reasons_v <- gss1 %>%
+  filter(fv1fvol == "Volunteer") %>%
+  select(rv_040, rv_050,
+         rv_080, rv_090, rv_110) %>%
+  pivot_longer(everything(), names_to = "Reason", values_to = "Yes") %>%
+  filter(Yes == "Yes") %>%
+  group_by(Reason) %>%
+  summarise(count = n())
+
+fulfilling_v <- gss1 %>%
+  filter(fv1fvol == "Volunteer") %>%
+  select(fulfillingn, fulfillingj, fulfillingcc, fulfillings, fulfillingh) %>%
+  pivot_longer(everything(), names_to = "fulfilled", values_to = "Yes") %>%
+  filter(Yes == "Yes") %>%
+  group_by(fulfilled) %>%
+  summarise(fcount = n())
+
+reasons_described <- tibble(Reason = c('rv_040', 'rv_050',
+                  'rv_080', 'rv_090', 'rv_110'),
+       description = c("To network", "Job opportunities",
+                       "Community contribution", "To use your skills",
+                       "Improve health/well-being"),
+       fulfilled = c('fulfillingn', 'fulfillingj', 'fulfillingcc','fulfillings','fulfillingh'))
+
+reasons_v <- left_join(reasons_v, reasons_described, by = "Reason")
+reasons_v <- left_join(reasons_v, fulfilling_v, by = "fulfilled")
+
+reasons_plot <- ggplot(reasons_v) +
+  geom_bar(aes(x = reorder(description, count), y = count), stat = "identity",fill = "#f8766d") +
+  geom_bar(aes(x = reorder(description, count), y = fcount), stat = "identity", fill = "#00bfc4") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+  labs(title = "A. Reasons for Volunteering\n    in the past 12 months",
+       x = "",
+       y = "Number of responses") +
+  coord_flip()
+
+volunteersonly <- gss1 %>%
+  filter(fv1fvol == "Volunteer")
+
+fulfilling_plot <- ggplot(volunteersonly) +
+  geom_bar(aes(x=fulfilling, fill = fulfilling)) +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
+  labs(title = "  B. At least one reason\n      was fulfilled",
+       x = "",
+       y = "Number of responses",
+       fill = "")
+
+reasons_plot + fulfilling_plot
+```
 
 
 `R` [@citeR] and the R packages `tidyverse`[@thereferencecanbewhatever] and kableExtra [@kableExtra] were used for data processing and to make the plots and tables.
@@ -123,8 +222,8 @@ life\_satisfaction = volunteer + gender + age + education + married \\ + childre
 ```{r model1r, include=FALSE, message=FALSE}
 
 model1var <- gss1 %>%
-  select(slm_01,
-         fv1fvol,
+  select(lifesatisfaction,
+    fv1fvol,
          gndr,
          dh1gage,
          marstat,
@@ -133,23 +232,22 @@ model1var <- gss1 %>%
          famincg2,
          dh1ged) %>%
   mutate(
-    lifesatisfaction = slm_01,
     isvolunteer = fv1fvol,
-    agegroup = dh1gage,
-    gender = gndr,
+    agegroup = factor(dh1gage, levels = c("25-34 years", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over")),
+    gender = factor(gndr, levels = c("Male", "Female")),
     married = ifelse(marstat == "Married", "Yes", "No"),
     childrenathome = cxrflag,
     employed = dlfs,
-    familyincome = as.factor(
-      famincg2 # fix the levels
-      # levels = c(
-      #   "Less than $25,000",
-      #   "$25,000 to $49,999",
-      #   "$50,000 to $74,999",
-      #   "$75,000 to $99,999",
-      #   "$100,000 to $124,999",
-      #   "$125,000 and more"
-      # )
+    familyincome = factor(
+      famincg2,
+      levels = c(
+        "$50,000 to $74,999",
+        "Less than $25,000",
+        "$25,000 to $49,999",
+        "$75,000 to $99,999",
+        "$100,000 to $124,999",
+        "$125,000 and more"
+      )
     ),
     education = dh1ged
   ) %>%
@@ -164,7 +262,7 @@ summary(model1)
 
 ## Model 2: Life Satisfaction and Volunteer Characteristics
 
-For our second model, we are interested in which specific characteristics of volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and if the volunteer experience fulfills their reasons for volunteering. We created a new variable for whether or not the volunteer experience fulfills their reasons for volunteering by taking the variables for the stated reasons for volunteering and matching it to the variables for the quality of their experience. So for example if an individual stated that a reason for volunteering was to network and they agreed that they were able to network from their volunteer experience, then this variable would be set to 'YES', otherwise 'NO'. Since there are multiple reasons for volunteering, we will set the variable to 'YES' whenever at least one of the reasons are satisfied. The model is shown in \@ref(eq:model2) follows:
+For our second model, we construct a multiple linear regression model to investigate what specific characteristics of volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and if the volunteer experience fulfills their reasons for volunteering. The model is shown in \@ref(eq:model2) follows:
 
 \begin{equation}
 life\_satisfaction = num\_organizations + frequency + fulfilling + quality  (\#eq:model2)
@@ -173,21 +271,7 @@ life\_satisfaction = num\_organizations + frequency + fulfilling + quality  (\#e
 ```{r model2r, include=FALSE, message=FALSE}
 
 model2var <- gss1 %>%
-  mutate(fulfilling = case_when(rv_040 == "Yes" & qvs_010 %in% c("Agree", "Strongly agree") ~ "Yes",
-                                rv_050 == "Yes" & qvs_020 %in% c("Agree", "Strongly agree") ~ "Yes",
-                                rv_080 == "Yes" & qvs_030 %in% c("Agree", "Strongly agree") ~ "Yes",
-                                rv_090 == "Yes" & qvs_060 %in% c("Agree", "Strongly agree") ~ "Yes",
-                                rv_110 == "Yes" & qvs_040 %in% c("Agree", "Strongly agree") ~ "Yes",
-                                TRUE ~ "No")) %>%
   filter(fv1fvol == "Volunteer") %>%
-  select(slm_01, vs1_010, vs1_020, fulfilling, qvs_010, qvs_020, qvs_030, qvs_040, qvs_050, qvs_060) %>%
-  mutate(lifesatisfaction = slm_01, numorgs = vs1_010, freq = vs1_020, 
-         network = ifelse(qvs_010 %in% c("Agree", "Strongly agree"), "Yes", "No"),
-         jobops = ifelse(qvs_020 %in% c("Agree", "Strongly agree"), "Yes", "No"),
-         community = ifelse(qvs_030 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
-         health = ifelse(qvs_040 %in% c("Agree", "Strongly agree"), "Yes", "No"), 
-         meaningful = ifelse(qvs_050 %in% c("Agree", "Strongly agree"), "Yes", "No"),
-         skills = ifelse(qvs_060 %in% c("Agree", "Strongly agree"), "Yes", "No")) %>%
   select(lifesatisfaction, numorgs, freq, fulfilling, network, jobops, community, health, meaningful, skills) %>%
   na.omit()
 
@@ -202,22 +286,60 @@ summary(model2)
 ```
 
 
-
 # Results
+
+Table \@ref(tab:tab1) shows the results of our first model with volunteer status and the socio-demographic variables. The baseline represents the life satisfaction score of male, unmarried and employed Canadians who do not volunteer, are in the age range 25-34 years, have a highschool degree, no children at home and have a family income of \$50,000 to \$74,999. Recall that life satisfaction is rated on a scale of 0-10. Using a significance level of 0.05, significant variables that were associated with an increase in life satisfaction in descending order of largest coefficient include being married, volunteering, 65 years or older, earning an income of \$125,000 and more, and being female. Being married vs not married from the baseline resulted in an increase of 0.42 points in life satisfaction and being a volunteer increased life satisfaction by 0.36 points.
+
+Significant variables associated with a decrease in life satisfaction include being not employed, having a family income of less than $50,000, having less than a highschool degree, being 35-54 years of age, and having children at home. Being unemployed vs employed resulted in a decrease of 0.85 points from the baseline whereas having children at home only had a small negative effect of 0.09 points decrease on life satisfaction.
+
+```{r tab1, echo=FALSE}
+ests <- format(round((summary(model1)$coeff)[,1], 2), nsmall = 2)
+pvals <- format(signif((summary(model1)$coeff)[,c( 4)], digits = 3), nsmall = 2)
+rownames_for_table <- c("Baseline", "Volunteer", "Female", "Age Group 15-24 years", "Age Group 35-44 years", "Age Group 45-54 years", "Age Group 55-64 years", "Age Group 65 years and over", "Education Less than High School", "Education Post-secondary diploma", "Education University Diploma", "Married Yes", "Children at home Yes", "Employed Not in labour force", "Employed Unable to determine", "Employed Unemployed", "Family income Less than $25,000", "Family income $25,000 to $49,999", "Family income $75,000 to $99,999", "Family income $100,000 to $124,999", "Family income $125,000 and more")
+rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Volunteer", "Female", "Age Group", "", "", "", "", "Education", "", "", "Married", "Children at home", "Employment Status", "", "", "Family income", "", "", "", "")
+v_subcategories <- c("", "", "", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over", "Less than High School", "Post-secondary diploma", "University Diploma", "", "", "Not in labour force", "Unable to determine", "Unemployed", "Less than $25,000", "$25,000 to $49,999", "$75,000 to $99,999", "$100,000 to $124,999", "$125,000 and more")
+colnames_for_table <- c("","Estimate", "p-value")
+my_pretty_table <- cbind(v_subcategories, ests, pvals)
+rownames(my_pretty_table) <- rownames_for_table1
+colnames(my_pretty_table) <- colnames_for_table
+knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coefficients for predictors of Model 1", booktabs = TRUE,
+    linesep = "") %>%
+  kable_styling(latex_options = "hold_position")
+```
+
+Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents individuals that volunteer at least once a month, have not had any of their reasons fulfilled and experienced none of the listed 5 benefits of volunteering. Making a community contribution has an estimated 0.42 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.32 increase in life satisfaction score from the baseline. Having benefited from job opportunities and having one's reasons fulfilled by the volunteer experience were associated with 0.21 and 0.31 point decreases respectfully.
+
+```{r tab2, echo=FALSE}
+ests <- format(round((summary(model2)$coeff)[,1], 2), nsmall = 2)
+pvals <- format(signif((summary(model2)$coeff)[,c( 4)], digits = 3), nsmall = 2)
+rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Number of Organizations", "Frequency", "", "", "", "Fulfilling", "Networking", "Job opportunities", "Community Contribution", "Improved Health", "Meaningful Involvement", "Use Skills and Experience")
+v_subcategories <- c("", "", "At least once a week", "At least three or four times in the past 12 months", "Daily or almost daily", "Once or twice in the past 12 months", "", "", "", "", "", "", "")
+colnames_for_table <- c("","Estimate", "p-value")
+my_pretty_table <- cbind(v_subcategories, ests, pvals)
+rownames(my_pretty_table) <- rownames_for_table1
+colnames(my_pretty_table) <- colnames_for_table
+knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coefficients for predictors of Model 2", booktabs = TRUE,
+    linesep = "") %>%
+  kable_styling(latex_options = "hold_position")
+```
+
 
 # Discussion
 
-## First discussion point
+## Volunteering increases life satisfaction
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+<!-- If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.  -->
+From our first model, we see that taking into account various socio-demographic variables, being a volunteer was still significant in predicting life satisfaction, and was positively correlated with it. In fact, it was the second highest predictor after marriage. This aligns with previous studies.
 
-## Second discussion point
+## Community and Meaning: the secret to life satisfaction?
+
+From the second model, having a meaningful involvement in the volunteer organization and contributing to the community were the significant predictors of life satisfaction among volunteers.
 
 ## Third discussion point
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+A limitation of this study is that many of the variables used in the analysis are subjective responses of the participants so they may not provide the most accurate true measure of certain variables. For example, there was only one question on life satisfaction in the survey where participants rated for themselves their life satisfaction on a scale of 0-10. However, there exist better measures of life satisfaction such as the Satisfaction with Life Scale (SWLS) [cite]. 
 
 \newpage
 
