@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: The purpose of this code is to clean-up the 2017 GSS data obtained 
+# Purpose: The purpose of this code is to clean-up the 2018 GSS data obtained 
 # from the U of T library. That data is available to U of T students, but it needs 
 # to be put into a tidy format before it can be analysed. This code does that.
 # The main issue is that the data are released with codes for variables, whereas,
@@ -9,9 +9,9 @@
 # possible values. In that we embed some R code that will do a replacement. We 
 # then apply that dataset to the raw dataset. Finally we do all the usual cleaning.
 # to the dataset. You will end up with a dataset called gss.csv.
-# Authors: Rohan Alexander and Sam Caetano
-# Contact: rohan.alexander@utoronto.ca
-# Date: 7 October 2020
+# Authors: Kimlin Chin
+# Contact: kimlin.chin@mail.utoronto.ca
+# Date: 24 April 2022
 # License: MIT
 # Pre-reqs: You need to have downloaded the data from the library. To do that: 
   ## 1. Go to: http://www.chass.utoronto.ca/
@@ -20,27 +20,41 @@
   ## 4. Continue in English (you're welcome to use the French, but we probably can't
   ## help you too much).
   ## 5. Crtl F GSS, click
-  ## 6. Click "Data" on the one you want. We used 2017, but you may want a different 
+  ## 6. Click "Data" on the one you want. We used 2018, but you may want a different 
   ## wave. In particular the General Social Survey on social identity (cycle 27), 
   ## 2013 has some variables on voter participation if you're into that sort of 
   ## thing. You're welcome to pick any year but this code applies to 2017.
   ## 7. Click download
   ## 8. Select CSV data file, data definitions for STATA (gross, but stick with it for now).
   ## 9. Can select all variables by clicking button next to green colored "All". Then continue.
-  ## 10. Create the files, download and save
+  ## 10. Create the files, download all and save
 # Check: 
-  ## You WILL need to change the raw data name. Search for .csv - line 41
+  ## You WILL need to change the raw data name. Search for .csv - line 42
   ## You may need to adjust the filepaths depending on your system. Search for: read_
-
+# Notes:
+  ## Modified from the gss cleaning file made by Rohan Alexander and Sam Caetano.
 
 #### Workspace set-up ####
 library(janitor)
 library(tidyverse)
 
 # Load the data dictionary and the raw data and correct the variable names
-raw_data <- read_csv("inputs/data/gss_volunteer_data2018.csv")
+raw_data <- read_csv("inputs/data/gss_volunteer_data2018.csv") #CHANGE THIS TO THE NAME OF THE DOWNLOADED CSV
+
+# In the downloaded stata file, there will be 3 sections, where the start of section
+# is delineated using:
+# *******************************************************************
+# *  Some text
+# * ...
+# *  More text
+# *******************************************************************
+# To get the dict file, copy and paste the 3rd section which begins with "dictionary using Y {"
+# into a separate txt file named v_dict.txt and save. Make sure to change the filepath as needed
 dict <- read_lines("inputs/data/v_dict.txt", skip = 18) # skip is because of preamble content
+
 # Now we need the labels because these are the actual responses that we need
+# To get the labels file, copy and paste the 1st section into a separate txt 
+# file named v_labels.txt and save. Make sure to change the filepath as needed
 labels_raw <- read_file("inputs/data/v_labels.txt")
 
 
@@ -149,61 +163,5 @@ gss <- gss %>%
             .funs = funs(str_remove(.,"s"))) %>%
   mutate_at(vars(vd1dex01:vd1dex15), 
             .funs = funs(ifelse(.=="No", 0, .)))
-
-
-# main_act <- raw_data %>% 
-#   mutate(main_activity = case_when(
-#     mpl_105a=="Yes"~ "Working at a paid job/business",
-#     mpl_105b=="Yes" ~ "Looking for paid work",
-#     mpl_105c=="Yes" ~ "Going to school",
-#     mpl_105d=="Yes" ~ "Caring for children",
-#     mpl_105e=="Yes" ~ "Household work", 
-#     mpl_105i=="Yes" ~ "Other", 
-#     TRUE~ "NA")) %>% 
-#   select(main_activity) %>% 
-#   pull()
-
-# gss <- gss %>% mutate(main_activity = main_act, age_diff = age_diff)
-
-
-
-# Change some from strings into numbers
-# gss <- gss %>% 
-#   rowwise() %>% 
-#   mutate(hh_size = str_remove(string = hh_size, pattern = "\\ .*")) %>% 
-#   mutate(hh_size = case_when(
-#     hh_size=="One" ~ 1,
-#     hh_size=="Two" ~ 2,
-#     hh_size=="Three" ~ 3,
-#     hh_size=="Four" ~ 4,
-#     hh_size=="Five" ~ 5,
-#     hh_size=="Six" ~ 6
-#   )) 
-# 
-# 
-# 
-# gss <- gss %>% 
-#   rowwise() %>% 
-#   mutate(number_marriages = str_remove(string = number_marriages, pattern = "\\ .*")) %>% 
-#   mutate(number_marriages = case_when(
-#     number_marriages=="No" ~ 0,
-#     number_marriages=="One" ~ 1,
-#     number_marriages=="Two" ~ 2,
-#     number_marriages=="Three" ~ 3,
-#     number_marriages=="Four" ~ 4
-#   )) 
-# 
-# gss <- gss %>% 
-#   rowwise() %>% 
-#   mutate(number_total_children_known = ifelse(number_total_children_intention=="Don't know"|number_total_children_intention=="NA", 0, 1)) %>% 
-#   mutate(number_total_children_intention = str_remove(string = number_total_children_intention, pattern = "\\ .*")) %>% 
-#   mutate(number_total_children_intention = case_when(
-#     number_total_children_intention=="None" ~ 0,
-#     number_total_children_intention=="One" ~ 1,
-#     number_total_children_intention=="Two" ~ 2,
-#     number_total_children_intention=="Three" ~ 3,
-#     number_total_children_intention=="Four" ~ 4,
-#     number_total_children_intention=="Don't" ~ as.numeric(NA)
-#   )) 
 
 write_csv(gss, "inputs/data/gss.csv")
