@@ -5,5 +5,5 @@ This repository contains the code to produce a paper which analyzes results from
 The repository is organised as follows:
 
 * outputs: contains the pdf of the paper, and Rmd and bibtex files used to produce it.
-* scripts: contains data processing and cleaning R files.
+* scripts: contains data cleaning and simulation R files.
 * gss_volunteering2018.Rproj
