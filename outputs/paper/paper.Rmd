@@ -4,7 +4,7 @@ subtitle: "Insights from the 2018 Canadian General Social Survey"
 author: Kimlin Chin
 thanks: "Code and data are available at: https://github.com/KCtt457/gssvolunteering2018."
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "Volunteering has been linked to many benefits including health, happiness and life satisfaction; however, there is limited research on the precise aspects of volunteering associated with these benefits. In this paper, we investigate how different aspects of volunteering including frequency, reasons and quality of experience in volunteering are correlated with life satisfaction using a multiple linear regression model. We find that among people who volunteer, people who use their skills in their volunteering experience and volunteer at least once a week had higher life satisfaction. Our findings have implications for the general public in making the most out of their volunteer experience. \\par \\textbf{Keywords:} volunteering, life satisfaction, multiple linear regression, canadian general social survey, canada"
+abstract: "Volunteering has been associated with higher life satisfaction; however, there is limited research on the precise aspects of volunteering associated with life satisfaction. In this paper, we investigate how different aspects of volunteering including number of organizations, frequency and different qualities of experience in volunteering are correlated with life satisfaction using a multiple linear regression model. We find that among people who volunteer, believing that you made a contribution to the community and having been meaningfully involved in the work of the organization were correlated with higher life satisfaction. Our findings have implications for the general public in making the most out of their volunteer experience to increase life satisfaction. \\par \\textbf{Keywords:} volunteering, life satisfaction, multiple linear regression, canadian general social survey, canada"
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -25,9 +25,9 @@ gss1 <- read_csv(here::here("inputs/data/gss.csv"))
 # Introduction
 
 <!-- Background, context -->
-Life satisfaction is an indicator of well-being, and although it has many different definitions, I like the one by Sumner (1966) as cited in @lifesatisdef, which is "A positive  evaluation  of  the conditions of your life, a judgment that at least on balance, it measures up favorably against your standards or expectations." Volunteering, which is giving of your time and effort freely towards helping others outside of your household without compensation, has been positively associated with life satisfaction [@Thoits2001]. However, previous studies have mainly investigated the effect of volunteer status alone and not the different aspects of volunteering beyond number of hours/frequency [@BORGONOVI20082321; @socsci7050078], as well as prefer to examine older populations [@socsci7050078; @HUANG2019172]. However, the few studies that have investigated the aspects of volunteering associated with well-being have found being appreciated for their volunteer work and believing that others benefit from their efforts [@Jongenelis2021a], volunteering 2-3 hours per week [@morrow], organizational support [@geront], volunteering for causes they believe to be important, and meaningful volunteer activities [@Jongenelis2021] were positive predictors of well-being.
+Life satisfaction is an indicator of well-being, and although it has many different definitions, I like the one by Sumner (1966) as cited in @lifesatisdef, which is "A positive  evaluation  of  the conditions of your life, a judgment that at least on balance, it measures up favorably against your standards or expectations." Volunteering, which is giving of your time and effort freely towards helping others outside of your household without compensation, has been positively associated with life satisfaction [@Thoits2001]. However, previous studies have mainly investigated the effect of volunteer status alone and not the different aspects of volunteering beyond number of hours or frequency [@BORGONOVI20082321; @socsci7050078]. Many studies also prefer to examine older populations [@socsci7050078; @HUANG2019172]. The few studies that have investigated the aspects of volunteering associated with well-being, however, have found that being appreciated for their volunteer work and believing that others benefit from their efforts [@Jongenelis2021a], volunteering 2-3 hours per week [@morrow], organizational support [@geront], volunteering for causes they believe to be important, and meaningful volunteer activities [@Jongenelis2021] were positive predictors of well-being.
 
-In this paper we analyze data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating to investigate the effects of volunteering and the different aspects of volunteering on life satisfaction. Specifically we will compare how different forms of volunteering (formal vs informal) as well as other altruistic behaviour such as giving financially are correlated with life satisfaction. We construct a multiple linear regression model to do this. We will also create another multiple linear regression model where life satisfaction is explained by certain aspects of volunteering including number of organizations, frequency, and different qualities of the volunteer experience. We find that while formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, formal volunteering had the strongest effect. Our second model revealed that among people who volunteer, believing you made a contribution to the community and being involved in meaningful ways in the work of the organization were significant aspects of volunteering that predicted higher life satisfaction. This adds to the literature since we investigated the population in Canada whereas previous studies looked at other parts of the world (US [@geront], Australia [@Jongenelis2021], Europe [@socsci7050078], Asia [@HUANG2019172]), we compared different types of volunteering whereas other studies usually chose one type (formal) and we looked at other aspects of volunteering not commonly explored before: improvement of job opportunities and use of skills and experience.
+In this paper we analyze data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating to investigate the effects of volunteering and the different aspects of volunteering on life satisfaction. Specifically we will compare how different forms of volunteering (formal vs informal) as well as other altruistic behavior such as giving financially are correlated with life satisfaction. We construct a multiple linear regression model to do this. We also create another multiple linear regression model where life satisfaction is explained by certain aspects of volunteering including number of organizations, frequency, and different qualities of the volunteer experience. We find that while formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, formal volunteering had the strongest effect. Our second model revealed that among people who volunteer, believing you made a contribution to the community and being involved in meaningful ways in the work of the organization were significant aspects of volunteering that predicted higher life satisfaction. This adds to the literature since we investigated the population in Canada whereas previous studies looked at other parts of the world (US [@geront], Australia [@Jongenelis2021], Europe [@socsci7050078], Asia [@HUANG2019172]), we compared different types of volunteering whereas other studies usually chose one type (formal) and we looked at other aspects of volunteering not commonly explored before: improvement of job opportunities and use of skills and experience.
 
 The rest of the paper has the following structure: Section \@ref(data) describes the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating, Section \@ref(model) discusses the multiple linear regression models used in the data analysis, Section \@ref(results) presents the results of our analysis and Section \@ref(discussion) discusses the findings and limitations. `R` [@citeR] and the R packages `tidyverse`[@thereferencecanbewhatever] and kableExtra [@kableExtra] were used for data processing and to make the plots and tables in this paper.
 
@@ -66,21 +66,44 @@ gss1 %>%
 column_spec(c(1,4,5,6,7), width = "2.5cm")
 ```
 
-Since we are interested in the relationship between volunteering and life satisfaction, we do some data exploration of these features. Figure \@ref(fig:volunteerflag) shows the number of (formal) volunteers and non-volunteers in the sample. Formal volunteers are individuals who do work within a volunteer organization whereas informal volunteers are not members of an organization but do engage in activities that help people or the community directly.
+Since we are interested in the relationship between volunteering and life satisfaction, we do some data exploration of these features. Figure \@ref(fig:volunteerflag) shows the counts of formal volunteers, informal volunteers and givers compared to their complements in the sample. Formal volunteers are defined as individuals who worked within a volunteer organization in the past 12 months whereas informal volunteers are not members of an organization but engaged in activities that helped people or the community directly during the past 12 months. Givers are respondents who made a donation to charitable or non-profit organization within the past 12 months.
 
-```{r volunteerflag, echo=FALSE, fig.cap="Number of Volunteers and Non-Volunteers in the Sample", message=FALSE, fig.height=3}
-ggplot(gss1) +
+```{r volunteerflag, echo=FALSE, fig.cap="Number of Volunteers (Formal and Informal) and Givers in the Sample", message=FALSE}
+fvol <- ggplot(gss1) +
   geom_bar(aes(x = fv1fvol, fill=fv1fvol)) +
-  labs(x="Volunteer Flag",
-       y="Number of responses") +
+  labs(x="Formal Volunteer Flag",
+       y="") +
+  scale_y_continuous(limits = c(0, 12500), breaks = seq(0, 12500, by=4000)) +
   theme_minimal() +
   theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
         legend.position = "none")
+
+ivol_data <- gss1 %>%
+  mutate(informalvol = factor(ivc_flag, levels = c("Not an informal volunteer", "Informal volunteer")),
+         giver = factor(fg1fgiv, levels = c("Non-giver", "Giver")))
+
+ivol <- ggplot(ivol_data) +
+  geom_bar(aes(x = informalvol, fill=informalvol)) +
+  labs(x="Informal Volunteer Flag",
+       y="Number of responses") +
+  scale_y_continuous(limits = c(0, 12500), breaks = seq(0, 12500, by=4000)) +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        legend.position = "none")
+
+giving <- ggplot(ivol_data) +
+  geom_bar(aes(x = giver, fill=giver)) +
+  labs(x="Gave financially",
+       y="") +
+  scale_y_continuous(limits = c(0, 12500), breaks = seq(0, 12500, by=4000)) +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        legend.position = "none")
+
+fvol / ivol / giving
 ```
 
-There is about a 50-50 split between the volunteers and non-volunteers in our sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.\
-
-<!-- show informal volunteers and givers -->
+There is about a 50-50 split between the formal volunteers and non-volunteers in our sample. For informal volunteers and givers, the ratio is about the same with 3 informal volunteers/givers to 1 not informal volunteer/non-giver.  However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.\
 
 Figure \@ref(fig:lifesatis) shows life satisfaction by volunteer status. Life satisfaction was rated on a scale from 0 to 10, where 0 means very disatisfied with life, and 10 means very satisfied with life. Overall, the majority of respondents had relatively high satisfaction ratings about 7-10. It can clearly be seen from the graph that in the lower life satisfaction ratings 0-6, the percentage of non-volunteers was greater than volunteers. Interestingly at a rating of 7 it appears to be about an even split, and for higher life satisfaction ratings the percentage of volunteers is greater than the percentage of non-volunteers.
 
@@ -214,7 +237,7 @@ reasons_plot
 
 ## Strengths and Weaknesses
 
-Some strengths of the data include that it is a large sample, it explores multiple different variables on the topic of interest which is giving, volunteering and participating in detail and also although volunteers were the subject of interest, data on non-volunteers were also included such as their reasons for not volunteering or other similar activities (such as helping at home) that they may undertake instead. 
+Some strengths of the data include that it is a fairly large sample, it explores multiple different variables on the topic of interest which is giving, volunteering and participating in detail and also although volunteers were the subject of interest, data on non-volunteers were also included such as their reasons for not volunteering or other similar activities (such as helping at home) that they may undertake instead. I did not encounter any weaknesses in the data, except perhaps that we cannot make generalizations to the wider population of Canada about the proportion of individuals who volunteer since rejective sampling was used.
 
 # Model
 
@@ -228,6 +251,8 @@ For our first model, we are interested in how volunteer status is correlated wit
 life\_satisfaction = \beta_1 formal\_volunteer + \beta_2 informal\_volunteer + \beta_3 giver + \beta_4 gender + \beta_5 age \\ + \beta_6 education + \beta_7 married + \beta_8 children\_at\_home + \beta_9 employment\_status + \beta_10 income\_level (\#eq:model1)
 \end{aligned}
 \end{equation}
+
+The $\beta$'s are the coefficients of our independent variables whose values will be determined when we fit the model.
 
 ```{r model1r, include=FALSE, message=FALSE}
 
@@ -276,7 +301,7 @@ summary(model1)
 
 ## Model 2: Life Satisfaction and Volunteer Characteristics
 
-For our second model, we construct a multiple linear regression model to investigate what specific characteristics of formal volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and different benefits of volunteering experienced including networking, improvement in job opportunities, community contribution, meaningful involvement, improved health and use of skills and experience. The model is shown in \@ref(eq:model2) follows:
+For our second model, we construct a multiple linear regression model to investigate what specific characteristics of formal volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to formal volunteers only (since non-volunteers do not have volunteer characteristics). Our dependent variable is life satisfaction again, and the independent variables include number of volunteer organizations, volunteer frequency and different benefits of volunteering experienced including networking, improvement in job opportunities, community contribution, meaningful involvement, improved health and use of skills and experience. The model is shown in \@ref(eq:model2) follows:
 
 \begin{equation}
 \begin{aligned}
@@ -310,13 +335,11 @@ summary(model2)
 
 # Results
 
-<!-- define p-value, significance level -->
+Table \@ref(tab:tab1) shows the results of our first model with volunteer status and the socio-demographic variables. Estimates of the coefficients of our dependent variables are shown in the 'Estimate' column, and their corresponding p-values are shown in the 'p-value' column. P-value is defined as "the probability under the assumption of no effect or no difference (null hypothesis), of obtaining a result equal to or more extreme than what was actually observed" [@Dahiru2011]. Since it is a probability, the interpretation of p-values close to zero is that the result is unlikely due to chance, which we will call "significant". For our analysis, we will assume a significance level of 0.05, that is, if the p-value is less than 0.05 we will call the variable significant. 
 
-<!-- talk about informal volunteering and giving -->
+The baseline of 7.19 represents the life satisfaction score of male, unmarried and employed Canadians who do not volunteer formally or informally, do not give financially, are in the age range 25-34 years, have a highschool degree, no children at home and have a family income of \$50,000 to \$74,999. Recall that life satisfaction is rated on a scale of 0-10, so this is already on the higher side of life satisfaction. Significant variables that were associated with an increase in life satisfaction in descending order of largest coefficient include being married, 65 years or older, formal volunteering, earning an income of \$125,000 and more, giving financially, being female and being an informal volunteer. Being married vs not married from the baseline resulted in an increase of 0.41 points in life satisfaction and being a formal volunteer increased life satisfaction by 0.30 points.
 
-Table \@ref(tab:tab1) shows the results of our first model with volunteer status and the socio-demographic variables. The baseline represents the life satisfaction score of male, unmarried and employed Canadians who do not volunteer, are in the age range 25-34 years, have a highschool degree, no children at home and have a family income of \$50,000 to \$74,999. Recall that life satisfaction is rated on a scale of 0-10. Using a significance level of 0.05, significant variables that were associated with an increase in life satisfaction in descending order of largest coefficient include being married, volunteering, 65 years or older, earning an income of \$125,000 and more, and being female. Being married vs not married from the baseline resulted in an increase of 0.42 points in life satisfaction and being a volunteer increased life satisfaction by 0.36 points.
-
-Significant variables associated with a decrease in life satisfaction include being not employed, having a family income of less than $50,000, having less than a highschool degree, being 35-54 years of age, and having children at home. Being unemployed vs employed resulted in a decrease of 0.85 points from the baseline whereas having children at home only had a small negative effect of 0.09 points decrease on life satisfaction.
+Significant variables associated with a decrease in life satisfaction include being not employed, having a family income of less than $50,000, having less than a highschool degree, being 35-54 years of age, and having children at home. Being unemployed vs employed resulted in a decrease of 0.84 points from the baseline whereas having children at home only had a small negative effect of 0.09 points decrease in life satisfaction.
 
 ```{r tab1, echo=FALSE}
 ests <- format(round((summary(model1)$coeff)[,1], 2), nsmall = 2)
@@ -324,16 +347,17 @@ pvals <- format(signif((summary(model1)$coeff)[,c( 4)], digits = 3), nsmall = 2)
 rownames_for_table <- c("Baseline", "Volunteer", "Female", "Age Group 15-24 years", "Age Group 35-44 years", "Age Group 45-54 years", "Age Group 55-64 years", "Age Group 65 years and over", "Education Less than High School", "Education Post-secondary diploma", "Education University Diploma", "Married Yes", "Children at home Yes", "Employed Not in labour force", "Employed Unable to determine", "Employed Unemployed", "Family income Less than $25,000", "Family income $25,000 to $49,999", "Family income $75,000 to $99,999", "Family income $100,000 to $124,999", "Family income $125,000 and more")
 rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Formal Volunteer", "Informal Volunteer", "Giver", "Female", "Age Group", "", "", "", "", "Education", "", "", "Married", "Children at home", "Employment Status", "", "", "Family income", "", "", "", "")
 v_subcategories <- c("", "", "", "", "", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over", "Less than High School", "Post-secondary diploma", "University Diploma", "", "", "Not in labour force", "Unable to determine", "Unemployed", "Less than $25,000", "$25,000 to $49,999", "$75,000 to $99,999", "$100,000 to $124,999", "$125,000 and more")
-colnames_for_table <- c("","Estimate", "p-value")
+colnames_for_table <- c("","Estimate", "p-value*")
 my_pretty_table <- cbind(v_subcategories, ests, pvals)
 rownames(my_pretty_table) <- rownames_for_table1
 colnames(my_pretty_table) <- colnames_for_table
 knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coefficients for predictors of Model 1", booktabs = TRUE,
     linesep = "") %>%
-  kable_styling(latex_options = "hold_position")
+  kable_styling(latex_options = "hold_position") %>%
+  add_footnote(c("p-value is the probability under the assumption of no effect or no difference (null hypothesis), of obtaining a result equal to or more extreme than what was actually observed. If p-value < 0.05, we say the variable is significant."), notation = "symbol")
 ```
 
-Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents the life satisfaction score of individuals that volunteer at least once a month, and experienced none of the listed 5 benefits of volunteering. Making a community contribution has an estimated 0.42 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.32 increase in life satisfaction score from the baseline. Having benefited from improved job opportunities was associated with 0.21 point decrease.
+Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents the life satisfaction score of individuals that volunteer at least once a month, and experienced none of the listed 5 benefits of volunteering. The significant variables include contributing to the community, being meaningfully involved in the work of the organization and increasing number of organizations. Making a community contribution has an estimated 0.26 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.29 increase in life satisfaction score from the baseline. Each additional organization that a person volunteered with only results in a small increase of 0.05 points in life satisfaction. Significant variables that are negatively correlated with life satisfaction include having experienced an improvement in job opportunities because of the volunteer experience and volunteering at least 3-4 times in the past 12 months but less than once a month. Having benefited from improved job opportunities and volunteering at least 3-4 times in the past 12 months were associated with 0.21 point decrease and 0.20 decrease respectively.
 
 ```{r tab2, echo=FALSE}
 ests <- format(round((summary(model2)$coeff)[,1], 2), nsmall = 2)
@@ -383,6 +407,143 @@ A limitation of this study is that many of the variables used in the analysis ar
 \appendix
 
 # Appendix {-}
+
+## Datasheet
+
+**Motivation**
+
+1. *For what purpose was the dataset created? Was there a specific task in mind? Was there a specific gap that needed to be filled? Please provide a description.*
+    - The dataset was created to enable analysis of social trends in order to monitor changes in the living conditions and well-being of Canadians and to provide information on specific social policy issues on the topic of Giving, Volunteering and Participating.
+2. *Who created the dataset (for example, which team, research group) and on behalf of which entity (for example, company, institution, organization)?*
+    - Statistics Canada
+3. *Who funded the creation of the dataset? If there is an associated grant, please provide the name of the grantor and the grant name and number.*
+    - Statistics Canada
+4. *Any other comments?*
+    - No.
+
+**Composition**
+
+1. *What do the instances that comprise the dataset represent (for example, documents, photos, people, countries)? Are there multiple types of instances (for example, movies, users, and ratings; people and interactions between them; nodes and edges)? Please provide a description.*
+	- The instances represent the survey responses of persons 15 years and over in Canada, excluding institutionalized persons and residents of the Yukon, Northwest Territories, and Nunavut.
+2. *How many instances are there in total (of each type, if appropriate)?*
+	- 16,149 survey responses
+3. *Does the dataset contain all possible instances or is it a sample (not necessarily random) of instances from a larger set? If the dataset is a sample, then what is the larger set? Is the sample representative of the larger set (for example, geographic coverage)? If so, please describe how this representativeness was validated/verified. If it is not representative of the larger set, please describe why not (for example, to cover a more diverse range of instances, because instances were withheld or unavailable).*
+	- It is a sample of the Canadian population. It was obtained by rejective sampling to focus on the subgroup of the population that are volunteers, so it is not representative of the distribution of volunteers in the population.
+4. *What data does each instance consist of? "Raw" data (for example, unprocessed text or images) or features? In either case, please provide a description.*
+	- TBD
+5. *Is there a label or target associated with each instance? If so, please provide a description.*
+	- TBD
+6. *Is any information missing from individual instances? If so, please provide a description, explaining why this information is missing (for example, because it was unavailable). This does not include intentionally removed information, but might include, for example, redacted text.*
+	- Certain questions in the survey were skipped
+7. *Are relationships between individual instances made explicit (for example, users' movie ratings, social network links)? If so, please describe how these relationships are made explicit.*
+	- TBD
+8. *Are there recommended data splits (for example, training, development/validation, testing)? If so, please provide a description of these splits, explaining the rationale behind them.*
+	- TBD
+9. *Are there any errors, sources of noise, or redundancies in the dataset? If so, please provide a description.*
+	- TBD
+10. *Is the dataset self-contained, or does it link to or otherwise rely on external resources (for example, websites, tweets, other datasets)? If it links to or relies on external resources, a) are there guarantees that they will exist, and remain constant, over time; b) are there official archival versions of the complete dataset (that is, including the external resources as they existed at the time the dataset was created); c) are there any restrictions (for example, licenses, fees) associated with any of the external resources that might apply to a dataset consumer? Please provide descriptions of all external resources and any restrictions associated with them, as well as links or other access points, as appropriate.*
+	- TBD
+11. *Does the dataset contain data that might be considered confidential (for example, data that is protected by legal privilege or by doctor-patient confidentiality, data that includes the content of individuals' non-public communications)? If so, please provide a description.*
+	- TBD
+12. *Does the dataset contain data that, if viewed directly, might be offensive, insulting, threatening, or might otherwise cause anxiety? If so, please describe why.*
+	- TBD
+13. *Does the dataset identify any sub-populations (for example, by age, gender)? If so, please describe how these subpopulations are identified and provide a description of their respective distributions within the dataset.*
+	- TBD
+14. *Is it possible to identify individuals (that is, one or more natural persons), either directly or indirectly (that is, in combination with other data) from the dataset? If so, please describe how.*
+	- TBD
+15. *Does the dataset contain data that might be considered sensitive in any way (for example, data that reveals race or ethnic origins, sexual orientations, religious beliefs, political opinions or union memberships, or locations; financial or health data; biometric or genetic data; forms of government identification, such as social security numbers; criminal history)? If so, please provide a description.*
+	- TBD
+16. *Any other comments?*
+	- TBD
+
+**Collection process**
+
+1. *How was the data associated with each instance acquired? Was the data directly observable (for example, raw text, movie ratings), reported by subjects (for example, survey responses), or indirectly inferred/derived from other data (for example, part-of-speech tags, model-based guesses for age or language)? If the data was reported by subjects or indirectly inferred/derived from other data, was the data validated/verified? If so, please describe how.*
+	- TBD
+2. *What mechanisms or procedures were used to collect the data (for example, hardware apparatuses or sensors, manual human curation, software programs, software APIs)? How were these mechanisms or procedures validated?*
+	- TBD
+3. *If the dataset is a sample from a larger set, what was the sampling strategy (for example, deterministic, probabilistic with specific sampling probabilities)?*
+	- TBD
+4. *Who was involved in the data collection process (for example, students, crowdworkers, contractors) and how were they compensated (for example, how much were crowdworkers paid)?*
+	- TBD
+5. *Over what timeframe was the data collected? Does this timeframe match the creation timeframe of the data associated with the instances (for example, recent crawl of old news articles)? If not, please describe the timeframe in which the data associated with the instances was created.*
+	- TBD
+6. *Were any ethical review processes conducted (for example, by an institutional review board)? If so, please provide a description of these review processes, including the outcomes, as well as a link or other access point to any supporting documentation.*
+	- TBD
+7. *Did you collect the data from the individuals in question directly, or obtain it via third parties or other sources (for example, websites)?*
+	- TBD
+8. *Were the individuals in question notified about the data collection? If so, please describe (or show with screenshots or other information) how notice was provided, and provide a link or other access point to, or otherwise reproduce, the exact language of the notification itself.*
+	- TBD
+9. *Did the individuals in question consent to the collection and use of their data? If so, please describe (or show with screenshots or other information) how consent was requested and provided, and provide a link or other access point to, or otherwise reproduce, the exact language to which the individuals consented.*
+	- TBD
+10. *If consent was obtained, were the consenting individuals provided with a mechanism to revoke their consent in the future or for certain uses? If so, please provide a description, as well as a link or other access point to the mechanism (if appropriate).*
+	- TBD
+11. *Has an analysis of the potential impact of the dataset and its use on data subjects (for example, a data protection impact analysis) been conducted? If so, please provide a description of this analysis, including the outcomes, as well as a link or other access point to any supporting documentation.*
+	- TBD
+12. *Any other comments?*
+	- TBD
+
+**Preprocessing/cleaning/labeling**
+
+1. *Was any preprocessing/cleaning/labeling of the data done (for example, discretization or bucketing, tokenization, part-of-speech tagging, SIFT feature extraction, removal of instances, processing of missing values)? If so, please provide a description. If not, you may skip the remaining questions in this section.*
+	- TBD
+2. *Was the "raw" data saved in addition to the preprocessed/cleaned/labeled data (for example, to support unanticipated future uses)? If so, please provide a link or other access point to the "raw" data.*
+	- TBD
+3. *Is the software that was used to preprocess/clean/label the data available? If so, please provide a link or other access point.*
+	- TBD
+4. *Any other comments?*
+	- TBD
+
+**Uses**
+
+1. *Has the dataset been used for any tasks already? If so, please provide a description.*
+	- Not to my knowledge.
+2. *Is there a repository that links to any or all papers or systems that use the dataset? If so, please provide a link or other access point.*
+	- No.
+3. *What (other) tasks could the dataset be used for?*
+	- TBD
+4. *Is there anything about the composition of the dataset or the way it was collected and preprocessed/cleaned/labeled that might impact future uses? For example, is there anything that a dataset consumer might need to know to avoid uses that could result in unfair treatment of individuals or groups (for example, stereotyping, quality of service issues) or other risks or harms (for example, legal risks, financial harms)? If so, please provide a description. Is there anything a dataset consumer could do to mitigate these risks or harms?*
+	- TBD
+5. *Are there tasks for which the dataset should not be used? If so, please provide a description.*
+	- TBD
+6. *Any other comments?*
+	- TBD
+
+**Distribution**
+
+1. *Will the dataset be distributed to third parties outside of the entity (for example, company, institution, organization) on behalf of which the dataset was created? If so, please provide a description.*
+	- The dataset is available through CHASS.
+2. *How will the dataset be distributed (for example, tarball on website, API, GitHub)? Does the dataset have a digital object identifier (DOI)?*
+	- TBD
+3. *When will the dataset be distributed?*
+	- It is already available.
+4. *Will the dataset be distributed under a copyright or other intellectual property (IP) license, and/or under applicable terms of use (ToU)? If so, please describe this license and/ or ToU, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms or ToU, as well as any fees associated with these restrictions.*
+	- TBD
+5. *Have any third parties imposed IP-based or other restrictions on the data associated with the instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms, as well as any fees associated with these restrictions.*
+	- TBD
+6. *Do any export controls or other regulatory restrictions apply to the dataset or to individual instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any supporting documentation.*
+	- TBD
+7. *Any other comments?*
+	- TBD
+
+**Maintenance**
+
+1. *Who will be supporting/hosting/maintaining the dataset?*
+	- TBD
+2. *How can the owner/curator/manager of the dataset be contacted (for example, email address)?*
+	- TBD
+3. *Is there an erratum? If so, please provide a link or other access point.*
+	- TBD
+4. *Will the dataset be updated (for example, to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (for example, mailing list, GitHub)?*
+	- TBD
+5. *If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances (for example, were the individuals in question told that their data would be retained for a fixed period of time and then deleted)? If so, please describe these limits and explain how they will be enforced.*
+	- TBD
+6. *Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.*
+	- TBD
+7. *If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.*
+	- TBD
+8. *Any other comments?*
+	- TBD
 
 
 # Additional details
