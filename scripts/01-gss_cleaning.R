@@ -39,9 +39,9 @@ library(janitor)
 library(tidyverse)
 
 # Load the data dictionary and the raw data and correct the variable names
-raw_data <- read_csv("inputs/data/gss_volunteer_data2018.csv") #CHANGE THIS TO THE NAME OF THE DOWNLOADED CSV
+raw_data <- read_csv("inputs/data/gss_volunteer_data2018.csv") #CHANGE THIS TO THE FILEPATH OF THE DOWNLOADED CSV
 
-# In the downloaded stata file, there will be 3 sections, where the start of section
+# In the downloaded STATA file, there will be 3 sections, where the start of section
 # is delineated using:
 # *******************************************************************
 # *  Some text
@@ -53,7 +53,7 @@ raw_data <- read_csv("inputs/data/gss_volunteer_data2018.csv") #CHANGE THIS TO T
 dict <- read_lines("inputs/data/v_dict.txt", skip = 18) # skip is because of preamble content
 
 # Now we need the labels because these are the actual responses that we need
-# To get the labels file, copy and paste the 1st section into a separate txt 
+# To get the labels file, copy and paste the 1st section of the STATA file into a separate txt 
 # file named v_labels.txt and save. Make sure to change the filepath as needed
 labels_raw <- read_file("inputs/data/v_labels.txt")
 

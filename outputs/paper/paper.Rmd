@@ -1,5 +1,5 @@
 ---
-title: "Qualities of Volunteering and Life Satisfaction: A multiple linear regression model"
+title: "The Qualities of Volunteering that predict higher Life Satisfaction: A multiple linear regression model"
 subtitle: "Insights from the 2018 Canadian General Social Survey"
 author: Kimlin Chin
 thanks: "Code and data are available at: https://github.com/KCtt457/gssvolunteering2018."
@@ -248,11 +248,11 @@ For our first model, we are interested in how volunteer status is correlated wit
 <!-- https://tex.stackexchange.com/questions/112238/how-to-wrap-a-long-equation-in-latex -->
 \begin{equation}
 \begin{aligned}
-life\_satisfaction = \beta_1 formal\_volunteer + \beta_2 informal\_volunteer + \beta_3 giver + \beta_4 gender + \beta_5 age \\ + \beta_6 education + \beta_7 married + \beta_8 children\_at\_home + \beta_9 employment\_status + \beta_10 income\_level (\#eq:model1)
+life\_satisfaction = \beta_1 formal\_volunteer + \beta_2 informal\_volunteer + \beta_3 giver + \beta_4 gender + \beta_5 age \\ + \beta_6 education + \beta_7 married + \beta_8 children\_at\_home + \beta_9 employment\_status + \beta_10 income\_level + \epsilon (\#eq:model1)
 \end{aligned}
 \end{equation}
 
-The $\beta$'s are the coefficients of our independent variables whose values will be determined when we fit the model.
+The $\beta$'s are the coefficients of our independent variables whose values will be determined when we fit the model, and $\epsilon$ is the random error term.
 
 ```{r model1r, include=FALSE, message=FALSE}
 
@@ -305,9 +305,11 @@ For our second model, we construct a multiple linear regression model to investi
 
 \begin{equation}
 \begin{aligned}
-life\_satisfaction = \beta_1 num\_organizations + \beta_2 frequency + \beta_3 network + \beta_4 jobops \\ + \beta_5 community + \beta_6 meaningful + \beta_7 health + \beta_8 skills  (\#eq:model2)
+life\_satisfaction = \beta_1 num\_organizations + \beta_2 frequency + \beta_3 network + \beta_4 jobops \\ + \beta_5 community + \beta_6 meaningful + \beta_7 health + \beta_8 skills + \epsilon  (\#eq:model2)
 \end{aligned}
 \end{equation}
+
+The $\beta$'s are the coefficients of our independent variables whose values will be determined when we fit the model, and $\epsilon$ is the random error term.
 
 ```{r model2r, include=FALSE, message=FALSE}
 
@@ -357,7 +359,7 @@ knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coef
   add_footnote(c("p-value is the probability under the assumption of no effect or no difference (null hypothesis), of obtaining a result equal to or more extreme than what was actually observed. If p-value < 0.05, we say the variable is significant."), notation = "symbol")
 ```
 
-Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents the life satisfaction score of individuals that volunteer at least once a month, and experienced none of the listed 5 benefits of volunteering. The significant variables include contributing to the community, being meaningfully involved in the work of the organization and increasing number of organizations. Making a community contribution has an estimated 0.26 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.29 increase in life satisfaction score from the baseline. Each additional organization that a person volunteered with only results in a small increase of 0.05 points in life satisfaction. Significant variables that are negatively correlated with life satisfaction include having experienced an improvement in job opportunities because of the volunteer experience and volunteering at least 3-4 times in the past 12 months but less than once a month. Having benefited from improved job opportunities and volunteering at least 3-4 times in the past 12 months were associated with 0.21 point decrease and 0.20 decrease respectively.
+Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents the life satisfaction score of individuals that volunteer at least once a month, and experienced none of the listed 5 benefits of volunteering. The significant variables include contributing to the community, being meaningfully involved in the work of the organization and increasing number of organizations. Making a community contribution has an estimated 0.26 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.29 increase in life satisfaction score from the baseline. Each additional organization that a person volunteered with only results in a small increase of 0.05 points in life satisfaction. Significant variables that are negatively correlated with life satisfaction include having experienced an improvement in job opportunities because of the volunteer experience and volunteering at least 3-4 times in the past 12 months but less than once a month. Having benefited from improved job opportunities and volunteering at least 3-4 times in the past 12 months were associated with 0.22 point decrease and 0.20 decrease respectively.
 
 ```{r tab2, echo=FALSE}
 ests <- format(round((summary(model2)$coeff)[,1], 2), nsmall = 2)
@@ -377,29 +379,31 @@ knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coef
 # Discussion
 
 <!-- brief summary of paper -->
-The present study investigated the effect of volunteering on life satisfaction, with three main research questions in mind: 1) Are volunteers more satisfied with life than non-volunteers?, 2) How do different types of altruistic behaviour affect life satisfaction? and 3) Among volunteers, what specific characteristics of volunteering are associated with higher life satisfaction? We created two multiple linear regression model using data from Canada's 2018 General Social Survey on Giving, Volunteering & Participating to address these questions. The results showed that compared to non-volunteers, the life satisfaction score of volunteers was 0.36 points higher, which was the second strongest positive effect among all the explanatory variables included in the model. Thus, the answer to the first research question is yes. Formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, but formal volunteering had the strongest effect. To address the third question, we considered the number of organizations volunteered with, frequency of volunteering, and various benefits obtained from the volunteer experience such as improved job opportunities and community contribution. The results showed that being meaningfully involved in the volunteer organization and contributing to the community were positively correlated with life satisfaction, whereas obtaining job opportunities was negatively correlated with life satisfaction. This suggests that volunteering that concerns itself with the growth and development of the community gives more life satisfaction than volunteering for one's own personal benefit. This has implications for making the most out of your volunteer experience.
+The present study investigated the effect of volunteering on life satisfaction, with three main research questions in mind: 1) Are volunteers more satisfied with life than non-volunteers?, 2) How do different types of altruistic behaviour (formal volunteering, informal volunteering and giving) affect life satisfaction? and 3) Among volunteers, what specific characteristics of formal volunteering are associated with higher life satisfaction? We created two multiple linear regression model using data from Canada's 2018 General Social Survey on Giving, Volunteering & Participating to address these questions. The results showed that compared to non-volunteers, the life satisfaction score of volunteers was higher so, the answer to the first research question is yes. Formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, but formal volunteering had the strongest effect. To address the third question, we considered the number of organizations volunteered with, frequency of volunteering, and various benefits obtained from the volunteer experience such as improved job opportunities and community contribution. The results showed that being meaningfully involved in the volunteer organization and contributing to the community were positively correlated with life satisfaction, whereas obtaining job opportunities was negatively correlated with life satisfaction. This suggests that volunteering that concerns itself with the growth and development of the community gives more life satisfaction than volunteering for one's own personal benefit. This has implications for making the most out of your volunteer experience.
 
 ## Volunteering increases life satisfaction
 
-<!-- reword this section -->
-From our first model, we see that taking into account the effects of various socio-demographic variables, being a volunteer was still significant in predicting life satisfaction, and was positively correlated with it. In fact, it was the second strongest effect after marriage. This aligns with previous studies. Informal volunteering also had an effect but it was smaller than for formal volunteering, and giving donations had a significant effect as well. So in general it appears that any form of helping others results in higher life satisfaction, but out of the different types, formal volunteering gives the highest increase in life satisfaction. So what is it about formal volunteering that increases satisfaction? We discuss this in the analysis of our second model.
+From our first model, we saw that being a volunteer (both formal and informal) was significant in predicting higher life satisfaction even after taking into account the effects of various socio-demographic variables known to be correlated with life satisfaction. In fact, formal volunteering had the third strongest effect after marriage and being 65 years and older. The positive correlation of volunteering with life satisfaction aligns with previous studies [@Thoits2001]. 
 
-## Community and Meaning: the secret to life satisfaction?
+Informal volunteering also had a positive effect on life satisfaction but it was 0.17 points lower than for formal volunteering. This result contradicts the result of the study by @Appau2018 which found life satisfaction to be higher for informal volunteering than formal volunteering using a very similar model to ours. In their study, the authors used construal-level theory to hypothesize that informal volunteering would lead to higeher subjective well-being since the persons could "relate better with the beneficiaries of the volunteer work compared to formal volunteering which tends to be more structured and regulated" and that informal volunteer work is "community based and more interpersonal" [@Appau2018]. 
 
-From the second model, having a meaningful involvement in the volunteer organization and contributing to the community were the significant predictors of life satisfaction among volunteers. On the other hand, benefiting from job opportunities was associated with a decrease in life satisfaction. Use of skills and experience, networking and improved health and well-being were not significant predictors compared to the other variables. 
+The different results in our study could perhaps be explained by the difference in culture (since their study was UK-based, as opposed to our study which uses Canadian data) and experience in formal volunteering. In our data, the two most common qualities of experience in formal volunteering that were agreed upon by most  volunteers in the sample were that the individual felt that they have been involved in meaningful ways in the work of the organization and that they have made a contribution to the community. Unfortunately data was not collected on the qualities of informal volunteer experience so we cannot make a direct comparison, but we can see that since formal volunteers get the "community based and more interpersonal" experience that @Appau2018 describes for informal volunteering over formal volunteering in the UK, which may not be the case for informal volunteering in Canada. Thus, we see the higher life satisfaction for formal volunteers over informal volunteers. Further research into the experiences of informal and formal volunteers is needed to make stronger conclusions and this existing literature is still quite limited (@Appau2018 was one of the few studies I could find on this topic).
 
-This hints at the idea that volunteering should be a self-less act if you want to derive life satisfaction from it, or perhaps it is just that altruistic people become volunteers to engage in self-less acts and hence get more life satisfaction. This is an interesting idea to consider given that in Western cultures promote the idea of self-actualization, so it is natural to think that developing yourself should make you have a more satisfied life. However, life also needs balance, too much of anything is not good, so the proportion of selflessness demonstrated through volunteering may only be one piece of the cake that makes life satisfactory. 
+Giving donations also had a significant positive effect on life satisfaction as well, which was higher than informal volunteering and close to formal volunteering, only about 0.05 points lower. A previous study using US data by @choi_kim_2011 found that any amount of charitable donations had a higher positive effect on well-being than volunteering, however the difference was small. Thus, the result is similar to our study in that there is a small difference between the effects of giving and volunteering on life satisfaction so we can conclude that making donations and volunteering produce similar increases in life satisfaction.
 
-Coupling this with insights from our first model, there is just something about the self-less organizational community contributions of formal volunteering that leads to higher life satisfaction that you don't get through informally helping others or financial donations. More research into this theme can investigate the amount of value persons put on their own self-development vs group/community development and how this various across different personalities and cultures, as this would influence what aspects of life they derive satisfaction from. It is also important to keep in mind that life satisfaction varies from person to person and that these conclusions we draw are from general trends in the population.
+So in general it appears that any form of helping others results in higher life satisfaction, but out of the different types, formal volunteering gives the highest increase in life satisfaction. So what is it about formal volunteering that increases satisfaction? We discuss this in the analysis of our second model.
 
-<!-- More research into this idea and how informal volunteering such as helping family, friends and neighbours among non-volunteers or making financial donations correlates with life satisfaction -->
+## Community and Meaningful involvement in Volunteering: the secret to life satisfaction?
+
+From the second model, having a meaningful involvement in the volunteer organization and contributing to the community were the significant predictors of higher life satisfaction among volunteers. On the other hand, experiencing improved job opportunities as a result of volunteering was associated with a decrease in life satisfaction. Use of skills and experience, networking and improved health and well-being were not significant predictors compared to the other variables. 
+
+This hints at the idea that volunteering should be a self-less act you do in groups if you want to derive life satisfaction from it, or perhaps it is just that altruistic people become volunteers to engage in these types of activities and hence get more life satisfaction since they are doing what they enjoy. Our model only gives a correlation so we cannot make any causal claims. This is an interesting idea to consider given that in Western cultures promote the idea of self-actualization, which is realizing one's full potential, so it is natural to think that developing yourself should make you have a more satisfied life. However, life also needs balance, too much of anything is not good, so the proportion of selflessness demonstrated through volunteering may only be one piece of the cake that makes life satisfactory. 
+
+Coupling this with insights from our first model, there is just something about the self-less organizational community contributions of formal volunteering that leads to higher life satisfaction that you don't get through informally helping others or financial donations. More research into this theme can investigate the amount of value persons put on their own self-development vs group/community development when volunteering and how this various across different personalities and cultures, as this would influence what aspects of life they derive satisfaction from. It is also important to keep in mind that life satisfaction varies from person to person and that these conclusions we draw are from trends in the general Canadian population.
 
 ## Weaknesses and next steps
 
-A limitation of this study is that many of the variables used in the analysis are subjective responses of the participants so they may not provide the most accurate true measure of certain variables. For example, there was only one question on life satisfaction in the survey where participants rated for themselves their life satisfaction on a scale of 0-10. However, there exist better measures of life satisfaction such as the Satisfaction with Life Scale (SWLS) [cite]. 
-
-# Conclusion
-
+A limitation of this study is that many of the variables used in the analysis are subjective responses of the participants so they may not provide the most accurate true measure of certain variables. For example, there was only one question on life satisfaction in the survey where participants rated for themselves their life satisfaction on a scale of 0-10. Although many previous studies use a similar measure when investigating this topic [@Thoits2001; @Appau2018], more robust measures of life satisfaction exist such as the Satisfaction with Life Scale (SWLS) [@swls]. Another limitation is that we did not go into depth on the effects of the aspects of informal volunteering on life satisfaction, as our focus was formal volunteering and also comparable features on informal volunteering were not provided in the survey data. For next steps, more data can be collected on the aspects of informal volunteering to see how they are correlated with life satisfaction.
 
 
 \newpage
@@ -545,9 +549,6 @@ A limitation of this study is that many of the variables used in the analysis ar
 	- No.
 8. *Any other comments?*
 	- No.
-
-
-# Additional details
 
 
 \newpage
