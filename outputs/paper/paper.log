@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.4.24)  26 APR 2022 01:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.4.24)  26 APR 2022 20:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -565,6 +565,10 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [1
 
 {c:/Users/chink/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 141.
+(c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 171.
 
@@ -572,89 +576,87 @@ Overfull \hbox (66.27943pt too wide) in paragraph at lines 171--187
  [][] 
  []
 
-<paper_files/figure-latex/volunteerflag-1.pdf, id=100, 469.755pt x 216.81pt>
+[2] [3
+pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.190 
+      ]
+<paper_files/figure-latex/volunteerflag-1.pdf, id=113, 469.755pt x 216.81pt>
 File: paper_files/figure-latex/volunteerflag-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/volunteerflag-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/volunteerflag-1.pdf  used on input line 193.
 (pdftex.def)             Requested size: 469.75386pt x 216.80946pt.
-[2
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.198 
-       <./paper_files/figure-latex/volunteerflag-1.pdf>] [3
-pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.198 
-      ]
-<paper_files/figure-latex/lifesatis-1.pdf, id=119, 469.755pt x 325.215pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 197--198
+
+ []
+
+<paper_files/figure-latex/lifesatis-1.pdf, id=115, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/lifesatis-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/lifesatis-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/lifesatis-1.pdf  used on input line 203.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [4
+pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.214 
+       <./paper_files/figure-latex/volunteerflag-1.pdf>] [5
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.212 
+l.214 
        <./paper_files/figure-latex/lifesatis-1.pdf>]
-<paper_files/figure-latex/fulfilplot-1.pdf, id=131, 469.755pt x 325.215pt>
+<paper_files/figure-latex/fulfilplot-1.pdf, id=136, 469.755pt x 325.215pt>
 File: paper_files/figure-latex/fulfilplot-1.pdf Graphic file (type pdf)
 <use paper_files/figure-latex/fulfilplot-1.pdf>
 Package pdftex.def Info: paper_files/figure-latex/fulfilplot-1.pdf  used on input line 217.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 221.
-(c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [5
+[6
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.235 
+l.233 
        <./paper_files/figure-latex/fulfilplot-1.pdf>]
-Overfull \hbox (81.88799pt too wide) detected at line 238
-[][]\OML/lmm/m/it/10 life[]satisfaction \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 volunteer \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 gender \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 age \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 education \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 married[]  \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 children[]at[]home \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 employment[]status \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 income[]level
- []
-
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Overfull \hbox (13.32837pt too wide) in paragraph at lines 295--314
+Overfull \hbox (13.32837pt too wide) in paragraph at lines 299--317
  [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[6] [7
+[7] [8
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.330 ...ion point}\label{third-discussion-point}}
-                                                  
+l.323 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.330 ...ion point}\label{third-discussion-point}}
-                                                  ] [8] [9] [10] (./paper.aux)
+l.323 
+      ] [9] [10] [11] (./paper.aux)
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: 88B0F6F50EA8E016661B65A8B37863D0;3006.
+(rerunfilecheck)             Checksum: B66059EF3C2AE63CF8DA6C2838441141;2926.
  ) 
 Here is how much of TeX's memory you used:
- 12821 strings out of 480193
- 203555 string characters out of 5891561
- 500958 words of memory out of 5000000
+ 12831 strings out of 480193
+ 203669 string characters out of 5891561
+ 504939 words of memory out of 5000000
  30498 multiletter control sequences out of 15000+600000
  538959 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,11n,63p,987b,329s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}<c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on paper.pdf (10 pages, 287848 bytes).
+ 60i,11n,63p,1771b,329s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}<c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/chink/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on paper.pdf (11 pages, 322609 bytes).
 PDF statistics:
- 266 PDF objects out of 1000 (max. 8388607)
- 221 compressed objects within 3 object streams
- 59 named destinations out of 1000 (max. 500000)
+ 297 PDF objects out of 1000 (max. 8388607)
+ 249 compressed objects within 3 object streams
+ 69 named destinations out of 1000 (max. 500000)
  160 words of extra memory for PDF output out of 10000 (max. 10000000)
 

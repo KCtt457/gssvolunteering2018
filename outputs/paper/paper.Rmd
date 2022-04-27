@@ -25,11 +25,11 @@ gss1 <- read_csv(here::here("inputs/data/gss.csv"))
 # Introduction
 
 <!-- Background, context -->
-Volunteering has been linked to many benefits including health, happiness and life satisfaction (cite literature).
+Life satisfaction is an indicator of well-being, and although it has many different definitions, I like the one by Sumner (1966) as cited in @lifesatisdef, which is "A positive  evaluation  of  the conditions of your life, a judgment that at least on balance, it measures up favorably against your standards or expectations." Volunteering, which is giving of your time and effort freely towards helping others outside of your household without compensation, has been positively associated with life satisfaction [@Thoits2001]. However, previous studies have mainly investigated the effect of volunteer status alone and not the different aspects of volunteering beyond number of hours/frequency [@BORGONOVI20082321; @socsci7050078], as well as prefer to examine older populations [@socsci7050078; @HUANG2019172]. However, the few studies that have investigated the aspects of volunteering associated with well-being have found being appreciated for their volunteer work and believing that others benefit from their efforts [@Jongenelis2021a], volunteering 2-3 hours per week [@morrow], organizational support [@geront], volunteering for causes they believe to be important, and meaningful volunteer activities [@Jongenelis2021] were positive predictors of well-being.
 
-But what specific aspects of volunteering may be related to life satisfaction? In this paper we take a look at the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating to investigate this question. Specifically we construct a multiple linear regression model with life satisfaction as our dependent variable, and independent variables for frequency, reasons for volunteering and quality of volunteer experience. We find that among people who volunteer, people who use their skills in their volunteering experience and volunteer at least once a week had higher life satisfaction.
+In this paper we analyze data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating to investigate the effects of volunteering and the different aspects of volunteering on life satisfaction. Specifically we will compare how different forms of volunteering (formal vs informal) as well as other altruistic behaviour such as giving financially are correlated with life satisfaction. We construct a multiple linear regression model to do this. We will also create another multiple linear regression model where life satisfaction is explained by certain aspects of volunteering including number of organizations, frequency, and different qualities of the volunteer experience. We find that while formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, formal volunteering had the strongest effect. Our second model revealed that among people who volunteer, believing you made a contribution to the community and being involved in meaningful ways in the work of the organization were significant aspects of volunteering that predicted higher life satisfaction. This adds to the literature since we investigated the population in Canada whereas previous studies looked at other parts of the world (US [@geront], Australia [@Jongenelis2021], Europe [@socsci7050078], Asia [@HUANG2019172]), we compared different types of volunteering whereas other studies usually chose one type (formal) and we looked at other aspects of volunteering not commonly explored before: improvement of job opportunities and use of skills and experience.
 
-The rest of the paper has the following structure: Section \@ref(data) describes the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating, Section \@ref(model) discusses the multiple linear regression model, Section \@ref(results) presents the results of our analysis and Section \@ref(discussion) discusses the findings and limitations.
+The rest of the paper has the following structure: Section \@ref(data) describes the data from the 2018 Canadian General Social Survey on Giving, Volunteering & Participating, Section \@ref(model) discusses the multiple linear regression models used in the data analysis, Section \@ref(results) presents the results of our analysis and Section \@ref(discussion) discusses the findings and limitations. `R` [@citeR] and the R packages `tidyverse`[@thereferencecanbewhatever] and kableExtra [@kableExtra] were used for data processing and to make the plots and tables in this paper.
 
 # Data
 
@@ -66,7 +66,7 @@ gss1 %>%
 column_spec(c(1,4,5,6,7), width = "2.5cm")
 ```
 
-Since we are interested in the relationship between volunteering and life satisfaction, we do some data exploration of these features. Figure \@ref(fig:volunteerflag) shows the number of volunteers and non-volunteers in the sample.
+Since we are interested in the relationship between volunteering and life satisfaction, we do some data exploration of these features. Figure \@ref(fig:volunteerflag) shows the number of (formal) volunteers and non-volunteers in the sample. Formal volunteers are individuals who do work within a volunteer organization whereas informal volunteers are not members of an organization but do engage in activities that help people or the community directly.
 
 ```{r volunteerflag, echo=FALSE, fig.cap="Number of Volunteers and Non-Volunteers in the Sample", message=FALSE, fig.height=3}
 ggplot(gss1) +
@@ -78,7 +78,9 @@ ggplot(gss1) +
         legend.position = "none")
 ```
 
-There is about a 50-50 split between the volunteers and non-volunteers in our sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.
+There is about a 50-50 split between the volunteers and non-volunteers in our sample. However, this should be looked at with caution when making generalizations to the wider population given that the data was obtained via rejective sampling.\
+
+<!-- show informal volunteers and givers -->
 
 Figure \@ref(fig:lifesatis) shows life satisfaction by volunteer status. Life satisfaction was rated on a scale from 0 to 10, where 0 means very disatisfied with life, and 10 means very satisfied with life. Overall, the majority of respondents had relatively high satisfaction ratings about 7-10. It can clearly be seen from the graph that in the lower life satisfaction ratings 0-6, the percentage of non-volunteers was greater than volunteers. Interestingly at a rating of 7 it appears to be about an even split, and for higher life satisfaction ratings the percentage of volunteers is greater than the percentage of non-volunteers.
 
@@ -124,7 +126,8 @@ gss1 <- gss1 %>%
 
 <!-- Correlation matrix -->
 
-Another idea to consider are the reasons people choose to volunteer and if they get what they wanted out of their volunteer experience, that is, if their volunteer experience fulfilling. We create a new variable for whether or not the volunteer experience fulfills their reasons for volunteering by taking the variables for the stated reasons for volunteering and matching them to the variables for the quality of their experience. So for example if an individual stated that a reason for volunteering was to network and they agreed that they were able to network from their volunteer experience, then this variable would be set to 'YES', otherwise 'NO'. Since there are multiple reasons for volunteering, we will set the variable to 'YES' whenever at least one of the reasons are satisfied. Plot A of Figure \@ref(fig:fulfilplot) shows the reasons people volunteer we matched to the quality of their experience and Plot B shows the new variable we created.
+
+We also considered the idea of the reasons people choose to volunteer and if they get what they wanted out of their volunteer experience, that is, if their volunteer experience was fulfilling. This can be done by matching the stated reasons for volunteering with the variables for the quality of their experience (e.g. reason 'to network' is matched with the quality 'networking'). The aggregated counts are shown in figure \@ref(fig:fulfilplot). However, since the reasons are almost always fulfilled by the volunteer experience for the majority of participants, we exclude this from our model analysis since it does not add much additional information given the benefits themselves.
 
 ```{r concisefulfilling, include=FALSE}
 
@@ -147,6 +150,8 @@ gss1 <- gss1 %>%
                                 rv_110 == "Yes" & qvs_040 %in% c("Agree", "Strongly agree") ~ "Yes",
                                 TRUE ~ "No"))
 ```
+
+<!-- add legend -->
 
 ```{r fulfilplot, echo=FALSE, fig.cap="Reasons for Volunteering that were fulfilled"}
 
@@ -177,14 +182,18 @@ reasons_described <- tibble(Reason = c('rv_040', 'rv_050',
 reasons_v <- left_join(reasons_v, reasons_described, by = "Reason")
 reasons_v <- left_join(reasons_v, fulfilling_v, by = "fulfilled")
 
+colors <- c("Fulfilled" = "#00bfc4", "Not Fulfilled" = "#f8766d")
+
 reasons_plot <- ggplot(reasons_v) +
   geom_bar(aes(x = reorder(description, count), y = count), stat = "identity",fill = "#f8766d") +
   geom_bar(aes(x = reorder(description, count), y = fcount), stat = "identity", fill = "#00bfc4") +
   theme_minimal() +
   theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
-  labs(title = "A. Reasons for Volunteering\n    in the past 12 months",
+  labs(title = "Reasons for Volunteering in the past 12 months",
        x = "",
-       y = "Number of responses") +
+       y = "Number of responses",
+       fill = "Fulfilled") +
+  scale_fill_manual(values = colors) +
   coord_flip()
 
 volunteersonly <- gss1 %>%
@@ -199,11 +208,9 @@ fulfilling_plot <- ggplot(volunteersonly) +
        y = "Number of responses",
        fill = "")
 
-reasons_plot + fulfilling_plot
+reasons_plot
 ```
 
-
-`R` [@citeR] and the R packages `tidyverse`[@thereferencecanbewhatever] and kableExtra [@kableExtra] were used for data processing and to make the plots and tables.
 
 ## Strengths and Weaknesses
 
@@ -213,10 +220,13 @@ Some strengths of the data include that it is a large sample, it explores multip
 
 ## Model 1: Life Satisfaction and Volunteer Flag
 
-For our first model, we are interested in how volunteer status is correlated with life satisfaction. We construct a multiple linear regression model with life satisfaction as the independent variable, and for the dependent variables we use volunteer flag and also various socio-demographic variables including gender, age, education level, marital status, if there are children at home, employment status and family income as these have been found to be relevant in previous research [cite]. The model is show in \@ref(eq:model1) follows:
+For our first model, we are interested in how volunteer status is correlated with life satisfaction. We construct a multiple linear regression model with life satisfaction as the dependent variable, and the main independent variables of interest are formal volunteer flag, informal volunteer flag and giver flag. We include informal volunteer and giver in our analysis as points of comparison to formal volunteering. The other dependent variables in our model are various socio-demographic variables including gender, age, education level, marital status, if there are children at home, employment status and family income as these have been found to be relevant in previous research [@Thoits2001; @BORGONOVI20082321]. The model is show in \@ref(eq:model1) follows:
 
+<!-- https://tex.stackexchange.com/questions/112238/how-to-wrap-a-long-equation-in-latex -->
 \begin{equation}
-life\_satisfaction = volunteer + gender + age + education + married \\ + children\_at\_home + employment\_status + income\_level (\#eq:model1)
+\begin{aligned}
+life\_satisfaction = \beta_1 formal\_volunteer + \beta_2 informal\_volunteer + \beta_3 giver + \beta_4 gender + \beta_5 age \\ + \beta_6 education + \beta_7 married + \beta_8 children\_at\_home + \beta_9 employment\_status + \beta_10 income\_level (\#eq:model1)
+\end{aligned}
 \end{equation}
 
 ```{r model1r, include=FALSE, message=FALSE}
@@ -230,7 +240,9 @@ model1var <- gss1 %>%
          cxrflag,
          dlfs,
          famincg2,
-         dh1ged) %>%
+         dh1ged,
+    fg1fgiv,
+    ivc_flag) %>%
   mutate(
     isvolunteer = fv1fvol,
     agegroup = factor(dh1gage, levels = c("25-34 years", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over")),
@@ -249,11 +261,13 @@ model1var <- gss1 %>%
         "$125,000 and more"
       )
     ),
-    education = dh1ged
+    education = dh1ged,
+    giver = factor(fg1fgiv, levels = c("Non-giver", "Giver")),
+    informal_volunteer = factor(ivc_flag, levels = c("Not an informal volunteer","Informal volunteer"))
   ) %>%
   na.omit()
 
-model1 <- lm(lifesatisfaction ~ isvolunteer + gender + agegroup + education + married + childrenathome + employed + familyincome, data = model1var)
+model1 <- lm(lifesatisfaction ~ isvolunteer + informal_volunteer + giver + gender + agegroup + education + married + childrenathome + employed + familyincome, data = model1var)
 
 summary(model1)
 
@@ -262,31 +276,43 @@ summary(model1)
 
 ## Model 2: Life Satisfaction and Volunteer Characteristics
 
-For our second model, we construct a multiple linear regression model to investigate what specific characteristics of volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and if the volunteer experience fulfills their reasons for volunteering. The model is shown in \@ref(eq:model2) follows:
+For our second model, we construct a multiple linear regression model to investigate what specific characteristics of formal volunteering might be correlated with life satisfaction. For this model, we restrict the datapoints to volunteers only (since non-volunteers do not have volunteer characteristics). Our independent variable is life satisfaction again, and the dependent variables include number of volunteer organizations, volunteer frequency and different benefits of volunteering experienced including networking, improvement in job opportunities, community contribution, meaningful involvement, improved health and use of skills and experience. The model is shown in \@ref(eq:model2) follows:
 
 \begin{equation}
-life\_satisfaction = num\_organizations + frequency + fulfilling + quality  (\#eq:model2)
+\begin{aligned}
+life\_satisfaction = \beta_1 num\_organizations + \beta_2 frequency + \beta_3 network + \beta_4 jobops \\ + \beta_5 community + \beta_6 meaningful + \beta_7 health + \beta_8 skills  (\#eq:model2)
+\end{aligned}
 \end{equation}
 
 ```{r model2r, include=FALSE, message=FALSE}
 
 model2var <- gss1 %>%
   filter(fv1fvol == "Volunteer") %>%
-  select(lifesatisfaction, numorgs, freq, fulfilling, network, jobops, community, health, meaningful, skills) %>%
+  select(lifesatisfaction, numorgs, freq, fulfilling, fulfillingn, fulfillings, fulfillingh, fulfillingj, fulfillingcc, network, jobops, community, health, meaningful, skills) %>%
   na.omit()
 
 # model2var %>%
 #   group_by(fulfilling) %>%
 #   summarise(count = n())
 
-model2 <- lm(lifesatisfaction ~ numorgs + freq + fulfilling + network + jobops + community + health + meaningful + skills, data = model2var)
+# model2 <- lm(lifesatisfaction ~ numorgs + freq + fulfilling + network + jobops + community + health + meaningful + skills, data = model2var)
+
+model2 <- lm(lifesatisfaction ~ numorgs + freq + network + jobops + community + health + meaningful + skills, data = model2var)
 
 summary(model2)
+
+# model2 <- lm(lifesatisfaction ~ numorgs + freq + fulfillingn + fulfillings + fulfillingh + fulfillingj + fulfillingcc + network + jobops + community + health + meaningful + skills, data = model2var)
+# 
+# summary(model2)
 
 ```
 
 
 # Results
+
+<!-- define p-value, significance level -->
+
+<!-- talk about informal volunteering and giving -->
 
 Table \@ref(tab:tab1) shows the results of our first model with volunteer status and the socio-demographic variables. The baseline represents the life satisfaction score of male, unmarried and employed Canadians who do not volunteer, are in the age range 25-34 years, have a highschool degree, no children at home and have a family income of \$50,000 to \$74,999. Recall that life satisfaction is rated on a scale of 0-10. Using a significance level of 0.05, significant variables that were associated with an increase in life satisfaction in descending order of largest coefficient include being married, volunteering, 65 years or older, earning an income of \$125,000 and more, and being female. Being married vs not married from the baseline resulted in an increase of 0.42 points in life satisfaction and being a volunteer increased life satisfaction by 0.36 points.
 
@@ -296,8 +322,8 @@ Significant variables associated with a decrease in life satisfaction include be
 ests <- format(round((summary(model1)$coeff)[,1], 2), nsmall = 2)
 pvals <- format(signif((summary(model1)$coeff)[,c( 4)], digits = 3), nsmall = 2)
 rownames_for_table <- c("Baseline", "Volunteer", "Female", "Age Group 15-24 years", "Age Group 35-44 years", "Age Group 45-54 years", "Age Group 55-64 years", "Age Group 65 years and over", "Education Less than High School", "Education Post-secondary diploma", "Education University Diploma", "Married Yes", "Children at home Yes", "Employed Not in labour force", "Employed Unable to determine", "Employed Unemployed", "Family income Less than $25,000", "Family income $25,000 to $49,999", "Family income $75,000 to $99,999", "Family income $100,000 to $124,999", "Family income $125,000 and more")
-rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Volunteer", "Female", "Age Group", "", "", "", "", "Education", "", "", "Married", "Children at home", "Employment Status", "", "", "Family income", "", "", "", "")
-v_subcategories <- c("", "", "", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over", "Less than High School", "Post-secondary diploma", "University Diploma", "", "", "Not in labour force", "Unable to determine", "Unemployed", "Less than $25,000", "$25,000 to $49,999", "$75,000 to $99,999", "$100,000 to $124,999", "$125,000 and more")
+rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Formal Volunteer", "Informal Volunteer", "Giver", "Female", "Age Group", "", "", "", "", "Education", "", "", "Married", "Children at home", "Employment Status", "", "", "Family income", "", "", "", "")
+v_subcategories <- c("", "", "", "", "", "15-24 years", "35-44 years", "45-54 years", "55-64 years", "65 years and over", "Less than High School", "Post-secondary diploma", "University Diploma", "", "", "Not in labour force", "Unable to determine", "Unemployed", "Less than $25,000", "$25,000 to $49,999", "$75,000 to $99,999", "$100,000 to $124,999", "$125,000 and more")
 colnames_for_table <- c("","Estimate", "p-value")
 my_pretty_table <- cbind(v_subcategories, ests, pvals)
 rownames(my_pretty_table) <- rownames_for_table1
@@ -307,13 +333,13 @@ knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coef
   kable_styling(latex_options = "hold_position")
 ```
 
-Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents individuals that volunteer at least once a month, have not had any of their reasons fulfilled and experienced none of the listed 5 benefits of volunteering. Making a community contribution has an estimated 0.42 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.32 increase in life satisfaction score from the baseline. Having benefited from job opportunities and having one's reasons fulfilled by the volunteer experience were associated with 0.21 and 0.31 point decreases respectfully.
+Table \@ref(tab:tab2) shows the results of our second model which considers the characteristics of volunteering. The baseline here represents the life satisfaction score of individuals that volunteer at least once a month, and experienced none of the listed 5 benefits of volunteering. Making a community contribution has an estimated 0.42 point increase in life satisfaction score and being meaningfully involved in the organization has a 0.32 increase in life satisfaction score from the baseline. Having benefited from improved job opportunities was associated with 0.21 point decrease.
 
 ```{r tab2, echo=FALSE}
 ests <- format(round((summary(model2)$coeff)[,1], 2), nsmall = 2)
 pvals <- format(signif((summary(model2)$coeff)[,c( 4)], digits = 3), nsmall = 2)
-rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Number of Organizations", "Frequency", "", "", "", "Fulfilling", "Networking", "Job opportunities", "Community Contribution", "Improved Health", "Meaningful Involvement", "Use Skills and Experience")
-v_subcategories <- c("", "", "At least once a week", "At least three or four times in the past 12 months", "Daily or almost daily", "Once or twice in the past 12 months", "", "", "", "", "", "", "")
+rownames_for_table1 <- c("Baseline Life Satisfaction Score", "Number of Organizations", "Frequency", "", "", "", "Networking", "Job opportunities", "Community Contribution", "Improved Health", "Meaningful Involvement", "Use Skills and Experience")
+v_subcategories <- c("", "", "At least once a week", "At least three or four times in the past 12 months", "Daily or almost daily", "Once or twice in the past 12 months", "", "", "", "", "", "")
 colnames_for_table <- c("","Estimate", "p-value")
 my_pretty_table <- cbind(v_subcategories, ests, pvals)
 rownames(my_pretty_table) <- rownames_for_table1
@@ -326,20 +352,31 @@ knitr::kable(my_pretty_table, align = c("l","r", "r"), caption = "Estimated Coef
 
 # Discussion
 
+<!-- brief summary of paper -->
+The present study investigated the effect of volunteering on life satisfaction, with three main research questions in mind: 1) Are volunteers more satisfied with life than non-volunteers?, 2) How do different types of altruistic behaviour affect life satisfaction? and 3) Among volunteers, what specific characteristics of volunteering are associated with higher life satisfaction? We created two multiple linear regression model using data from Canada's 2018 General Social Survey on Giving, Volunteering & Participating to address these questions. The results showed that compared to non-volunteers, the life satisfaction score of volunteers was 0.36 points higher, which was the second strongest positive effect among all the explanatory variables included in the model. Thus, the answer to the first research question is yes. Formal volunteering, informal volunteering and giving were all positively correlated with life satisfaction, but formal volunteering had the strongest effect. To address the third question, we considered the number of organizations volunteered with, frequency of volunteering, and various benefits obtained from the volunteer experience such as improved job opportunities and community contribution. The results showed that being meaningfully involved in the volunteer organization and contributing to the community were positively correlated with life satisfaction, whereas obtaining job opportunities was negatively correlated with life satisfaction. This suggests that volunteering that concerns itself with the growth and development of the community gives more life satisfaction than volunteering for one's own personal benefit. This has implications for making the most out of your volunteer experience.
+
 ## Volunteering increases life satisfaction
 
-<!-- If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.  -->
-From our first model, we see that taking into account various socio-demographic variables, being a volunteer was still significant in predicting life satisfaction, and was positively correlated with it. In fact, it was the second highest predictor after marriage. This aligns with previous studies.
+<!-- reword this section -->
+From our first model, we see that taking into account the effects of various socio-demographic variables, being a volunteer was still significant in predicting life satisfaction, and was positively correlated with it. In fact, it was the second strongest effect after marriage. This aligns with previous studies. Informal volunteering also had an effect but it was smaller than for formal volunteering, and giving donations had a significant effect as well. So in general it appears that any form of helping others results in higher life satisfaction, but out of the different types, formal volunteering gives the highest increase in life satisfaction. So what is it about formal volunteering that increases satisfaction? We discuss this in the analysis of our second model.
 
 ## Community and Meaning: the secret to life satisfaction?
 
-From the second model, having a meaningful involvement in the volunteer organization and contributing to the community were the significant predictors of life satisfaction among volunteers.
+From the second model, having a meaningful involvement in the volunteer organization and contributing to the community were the significant predictors of life satisfaction among volunteers. On the other hand, benefiting from job opportunities was associated with a decrease in life satisfaction. Use of skills and experience, networking and improved health and well-being were not significant predictors compared to the other variables. 
 
-## Third discussion point
+This hints at the idea that volunteering should be a self-less act if you want to derive life satisfaction from it, or perhaps it is just that altruistic people become volunteers to engage in self-less acts and hence get more life satisfaction. This is an interesting idea to consider given that in Western cultures promote the idea of self-actualization, so it is natural to think that developing yourself should make you have a more satisfied life. However, life also needs balance, too much of anything is not good, so the proportion of selflessness demonstrated through volunteering may only be one piece of the cake that makes life satisfactory. 
+
+Coupling this with insights from our first model, there is just something about the self-less organizational community contributions of formal volunteering that leads to higher life satisfaction that you don't get through informally helping others or financial donations. More research into this theme can investigate the amount of value persons put on their own self-development vs group/community development and how this various across different personalities and cultures, as this would influence what aspects of life they derive satisfaction from. It is also important to keep in mind that life satisfaction varies from person to person and that these conclusions we draw are from general trends in the population.
+
+<!-- More research into this idea and how informal volunteering such as helping family, friends and neighbours among non-volunteers or making financial donations correlates with life satisfaction -->
 
 ## Weaknesses and next steps
 
 A limitation of this study is that many of the variables used in the analysis are subjective responses of the participants so they may not provide the most accurate true measure of certain variables. For example, there was only one question on life satisfaction in the survey where participants rated for themselves their life satisfaction on a scale of 0-10. However, there exist better measures of life satisfaction such as the Satisfaction with Life Scale (SWLS) [cite]. 
+
+# Conclusion
+
+
 
 \newpage
 
