@@ -47,4 +47,3 @@ vignettes/*.pdf
 
 # data files
 inputs/data/
-scripts/data_exploration.R
